@@ -1,0 +1,55 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'Tartan'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+mainClassName = 'tartan.smarthome.TartanHomeApplication'
+
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    // JAX-B dependencies for JDK 9+
+    implementation "javax.xml.bind:jaxb-api:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-core:2.2.11"
+    implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
+    implementation "javax.activation:activation:1.1.1"
+    implementation 'io.dropwizard:dropwizard-bom:1.0.0'
+    implementation 'io.dropwizard:dropwizard-core:1.0.0'
+    implementation 'io.dropwizard:dropwizard-views-freemarker:1.0.0'
+    implementation 'io.dropwizard:dropwizard-auth:1.0.0'
+    implementation 'io.dropwizard:dropwizard-hibernate:1.0.0'
+    implementation 'io.dropwizard:dropwizard-assets:0.9.1'
+    implementation 'mysql:mysql-connector-java:8.0.13'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.2'
+}
+
+run {
+    args = ['server', 'config.yml']
+}
+
+shadowJar {
+    mergeServiceFiles()
+    manifest {
+        attributes 'Implementation-Title': rootProject.name
+        attributes 'Implementation-Version': rootProject.version
+        attributes 'Implementation-Vendor-Id': rootProject.group
+        attributes 'Created-By': 'Gradle ' + gradle.gradleVersion
+        attributes 'Main-Class': mainClassName
+    }
+    archiveName rootProject.name + '-' + rootProject.version + '.jar'
+}
+
+test {
+    useJUnitPlatform()
+}
