@@ -47,11 +47,11 @@ public class StaticTartanStateEvaluatorTest {
      */
     public void r3Test() {
         StringBuffer log = new StringBuffer();
-        Map<String,Object> VacantDoorState = testState();
-        VacantDoorState.put(IoTValues.DOOR_STATE, true);
-        VacantDoorState.put(IoTValues.PROXIMITY_STATE, false);      // house is vacant
+        Map<String,Object> initialState = testState();
+        initialState.put(IoTValues.DOOR_STATE, true);       // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false);      // house is vacant
 
-        Map<String,Object> newState = evaluator.evaluateState(VacantDoorState, log);
+        Map<String,Object> newState = evaluator.evaluateState(initialState, log);
         assertEquals(false, newState.get(IoTValues.DOOR_STATE));      
     }
 
