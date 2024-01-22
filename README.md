@@ -1,5 +1,13 @@
 # Tartan
 
+## Members of 402Wednesday3
+
+David Meas - ccid: meas
+Daniel Guo - ccid: dsguo
+Toufic Saadeh - ccid: toufic
+William Wong - ccid: wzwong
+Angela Binobo - ccid: binobo
+
 ## Building
 
 The build instructions can be found [here](./docs/build_instructions.md).
