@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import tartan.smarthome.resources.StaticTartanStateEvaluator;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
@@ -52,7 +53,8 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, false);      // house is vacant
 
         Map<String,Object> newState = evaluator.evaluateState(initialState, log);
-        assertEquals(false, newState.get(IoTValues.DOOR_STATE));      
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState,  "If the house is vacant, then close the door");
     }
 
     @Test
