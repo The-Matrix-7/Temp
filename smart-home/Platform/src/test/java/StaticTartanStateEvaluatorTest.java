@@ -90,7 +90,8 @@ public class StaticTartanStateEvaluatorTest {
         System.out.println("Log: " + log);
 
         assertEquals(true, newState.get(IoTValues.ALARM_STATE), "Alarm should be not be disabled with incorrect passcode"); // try the wrong code
-
+        
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         initialState.put(IoTValues.GIVEN_PASSCODE, "correct"); // give the correct passcode
 
         newState = evaluator.evaluateState(initialState, log);
