@@ -43,9 +43,21 @@ public class StaticTartanStateEvaluatorTest {
 
     @Test
     /**
+     * when the house is vacant, the light can't be turned on
      */
-    public void test1() {
-        //TODO: implement unit test  
+    public void  r1Test() {
+        //TODO: implement unit test: 
+        StringBuffer log= new StringBuffer();
+        Map<String,Object> initialState = testState();
+        //Given
+        //set the house to vacant
+        initialState.put(IoTValues.PROXIMITY_STATE,false);
+        // light is initially turned off
+        initialState.put(IoTValues.LIGHT_STATE,false)
+        //when
+        evaluator.evaluateState(initialState);
+        boolean lightStateAfterEvaluation = (boolean) initialState.get(IoTValues.LIGHT_STATE);
+        Assert.assertFalse("When the house is vacant, the light should not be turned on", lightStateAfterEvaluation);
     }
 
     @Test
