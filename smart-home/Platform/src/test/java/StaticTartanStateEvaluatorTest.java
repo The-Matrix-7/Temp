@@ -50,27 +50,23 @@ public class StaticTartanStateEvaluatorTest {
         //TODO: implement unit test  
     }
 
-    @Test
-    /**
-     */
-    public void test2() {
-        //TODO: implement unit test  
-    }
 
     @Test
     /**
+     * Checks if the system closes the door when the house is vacant (R3).
      */
-    public void test3() {
-        //TODO: implement unit test  
+    public void r3Test() {
+        StringBuffer log = new StringBuffer();
+        Map<String,Object> initialState = testState();
+        initialState.put(IoTValues.DOOR_STATE, true);       // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false);      // house is vacant
+
+        Map<String,Object> newState = evaluator.evaluateState(initialState, log);
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState,  "Door should not be open while the house is vacant");
     }
-    
-    @Test
-    /**
-     */
-    public void test4() {
-        //TODO: implement unit test 
-    }
-    
+
+
     @Test
     /**
     * R9 (the correct passcode is required to disable the alarm)
