@@ -20,13 +20,14 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
      * variable to ensure that the house remains in a consistent state.
      *
      * @param state The new state to evaluate
-     * @param log The log of state evaluations
+     * @param log   The log of state evaluations
      * @return The evaluated state
      */
     @Override
     public Map<String, Object> evaluateState(Map<String, Object> inState, StringBuffer log) {
 
-        // These are the state variables that reflect the current configuration of the house
+        // These are the state variables that reflect the current configuration of the
+        // house
 
         Integer tempReading = null; // the current temperature
         Integer targetTempSetting = null; // the user-desired temperature setting
@@ -39,7 +40,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Boolean heaterOnState = null; // the heater state (true if on, false if off)
         Boolean chillerOnState = null; // the chiller state (true if on, false if off)
         Boolean alarmActiveState = null; // the alarm active state (true if alarm sounding, false if alarm not sounding)
-        Boolean awayTimerState = false;  // assume that the away timer did not trigger this evaluation
+        Boolean awayTimerState = false; // assume that the away timer did not trigger this evaluation
         Boolean awayTimerAlreadySet = false;
         String alarmPassCode = null;
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
@@ -79,7 +80,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             } else if (key.equals(IoTValues.AWAY_TIMER)) {
                 // This is a hack!
                 awayTimerState = (Boolean) inState.getOrDefault(key, false);
-             } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
+            } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
                 alarmActiveState = (Boolean) inState.get(key);
             }
         }
@@ -88,17 +89,16 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             // The light was activated
             if (!proximityState) {
                 log.append(formatLogEntry("Cannot turn on light because user not home"));
-                    lightState = false;
-            }
-            else {
+                lightState = false;
+            } else {
                 log.append(formatLogEntry("Light on"));
-            }        
+            }
         } else if (lightState) {
             log.append(formatLogEntry("Light off"));
         }
 
         // The door is now open
-        if (doorState) {        
+        if (doorState) {
             if (!proximityState && alarmState) {
 
                 // door open and no one home and the alarm is set - sound alarm
@@ -128,7 +128,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 log.append(formatLogEntry("Closed door"));
             }
         }
-        
+
         // Auto lock the house
         if (awayTimerState == true) {
             lightState = false;
@@ -146,30 +146,29 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 lightState = true;
                 log.append(formatLogEntry("Turning on light"));
             }
-            
+
         }
 
-        // set the alarm
+        // set the alarm if alarm is off
         if (alarmState) {
             log.append(formatLogEntry("Alarm enabled"));
-            
 
-        } else if (!alarmState) { // attempt to disable alarm
+        } else if (alarmState) { // attempt to disable alarm
 
-            if (!proximityState) { 
+            if (!proximityState) {
                 alarmState = true;
 
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
             }
 
             if (alarmActiveState) {
-                if (givenPassCode.length()>0  && givenPassCode.compareTo(alarmPassCode) < 0) {
+                if (givenPassCode.length() > 0 && givenPassCode.compareTo(alarmPassCode) != 0) {
                     log.append(formatLogEntry("Cannot disable alarm, invalid passcode given"));
                     alarmState = true;
 
                 } else {
                     log.append(formatLogEntry("Correct passcode entered, disabled alarm"));
-                    alarmActiveState = false;
+                    alarmState = false;
                 }
             }
         }
@@ -180,8 +179,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         if (!alarmState) { // alarm disabled
             alarmActiveState = false;
-        }       
-        
+        }
 
         // determine if the alarm should sound. There are two cases
         // 1. the door is opened when no one is home
@@ -196,7 +194,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             log.append(formatLogEntry("Warning: Not enough information to evaluate alarm"));
         }
 
-       
         // Is the heater needed?
         if (tempReading < targetTempSetting) {
             log.append(formatLogEntry("Turning on heater, target temperature = " + targetTempSetting
@@ -223,7 +220,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         else {
             chillerOnState = false;
         }
-        
 
         if (chillerOnState) {
             hvacSetting = "Chiller";
@@ -250,7 +246,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
             heaterOnState = false; // can't run heater when the A/C is on
         }
-        
+
         if (humidifierState && hvacSetting.equals("Chiller")) {
             log.append(formatLogEntry("Enabled Dehumidifier"));
         } else {
@@ -271,7 +267,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         newState.put(IoTValues.HVAC_MODE, hvacSetting);
         newState.put(IoTValues.ALARM_PASSCODE, alarmPassCode);
         newState.put(IoTValues.GIVEN_PASSCODE, givenPassCode);
-        
-        return newState; 
+
+        return newState;
     }
 }
