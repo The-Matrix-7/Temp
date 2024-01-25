@@ -149,11 +149,11 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         }
 
-        // set the alarm if alarm is off
+        // alarm is currently on
         if (alarmState) {
             log.append(formatLogEntry("Alarm enabled"));
 
-        } else if (alarmState) { // attempt to disable alarm
+        // remove this line as it will never run the code inside it: } else if (alarmState) { // attempt to disable alarm
 
             if (!proximityState) {
                 alarmState = true;
