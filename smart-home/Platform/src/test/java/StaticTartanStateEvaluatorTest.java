@@ -79,8 +79,11 @@ public class StaticTartanStateEvaluatorTest {
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        initialState.put(IoTValues.ALARM_PASSCODE, "correct"); // Set the correct passcode
+        initialState.put(IoTValues.ALARM_PASSCODE, "correct"); // Set the passcode
         initialState.put(IoTValues.GIVEN_PASSCODE, "incorrect"); // give the incorrect passcode
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is not empty
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        
 
         System.out.println("Initial State: " + initialState);
 
@@ -93,13 +96,15 @@ public class StaticTartanStateEvaluatorTest {
         
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         initialState.put(IoTValues.GIVEN_PASSCODE, "correct"); // give the correct passcode
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is not empty
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
 
         newState = evaluator.evaluateState(initialState, log);
 
         System.out.println("New State: " + newState);
         System.out.println("Log: " + log);
 
-        assertEquals(false, newState.get(IoTValues.ALARM_ACTIVE), "Alarm should not be armed with correct passcode"); // try correct code
+        assertEquals(false, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with correct passcode"); // try correct code
     }
 
 }
