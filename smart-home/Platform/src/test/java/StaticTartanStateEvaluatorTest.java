@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import tartan.smarthome.resources.StaticTartanStateEvaluator;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
@@ -49,18 +50,24 @@ public class StaticTartanStateEvaluatorTest {
         // TODO: implement unit test
         StringBuffer log = new StringBuffer();
         Map<String, Object> initialState = testState();
-    
+
         // Given
         // Set the house to vacant
         initialState.put(IoTValues.PROXIMITY_STATE, false);
         // Light is initially turned off
         initialState.put(IoTValues.LIGHT_STATE, false);
+
         // When
-        Map<String, Object> newState = evaluator.evaluateState(initialState);
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         boolean lightStateAfterEvaluation = (boolean) newState.get(IoTValues.LIGHT_STATE);
+
         // Then
-        Assert.assertFalse("When the house is vacant, the light should not be turned on", lightStateAfterEvaluation);
+        assertFalse(lightStateAfterEvaluation, "When the house is vacant, the light should not be turned on");
+        
+        // Optionally, you can print the log for debugging or verification
+        //System.out.println("Evaluation Log: " + log.toString());
     }
+
     
 
     @Test
