@@ -62,6 +62,9 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.ALARM_STATE, true);
 
         initialState.put(IoTValues.PROXIMITY_STATE, true);
+        initialState.put(IoTValues.DOOR_STATE, false);
+        initialState.put(IoTValues.GIVEN_PASSCODE, "incorrect");
+
         StringBuffer log = new StringBuffer();
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
