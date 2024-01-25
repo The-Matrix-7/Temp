@@ -18,12 +18,13 @@ jobs:
         java-version: "11"
 
     - name: Build with Gradle
+      working-directory: ./smart-home/Platform
       run: |
         chmod +x gradlew
         ./gradlew build -x test
 
     - name: Run tests
-      working-directory: .
+      working-directory: ./smart-home/Platform
       run: |
         chmod +x gradlew
         ./gradlew test
