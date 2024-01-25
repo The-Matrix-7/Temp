@@ -1,0 +1,29 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Java
+      uses: actions/setup-java@v1
+      with:
+        java-version: "11"
+
+    - name: Build with Gradle
+      run: |
+        chmod +x gradlew
+        ./gradlew build -x test
+
+    - name: Run tests
+      working-directory: .
+      run: |
+        chmod +x gradlew
+        ./gradlew test
