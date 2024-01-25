@@ -149,12 +149,12 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             
         }
 
-        // set the alarm
-        if (alarmState) {
+        // set the alarm if alarm is off
+        if (!alarmState) {
             log.append(formatLogEntry("Alarm enabled"));
-            
+            alarmState = true;
 
-        } else if (!alarmState) { // attempt to disable alarm
+        } else if (alarmState) { // attempt to disable alarm
 
             if (!proximityState) { 
                 alarmState = true;
@@ -163,13 +163,13 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             }
 
             if (alarmActiveState) {
-                if (givenPassCode.length()>0  && givenPassCode.compareTo(alarmPassCode) < 0) {
+                if (givenPassCode.length()>0  && givenPassCode.compareTo(alarmPassCode) != 0) {
                     log.append(formatLogEntry("Cannot disable alarm, invalid passcode given"));
                     alarmState = true;
 
                 } else {
                     log.append(formatLogEntry("Correct passcode entered, disabled alarm"));
-                    alarmActiveState = false;
+                    alarmState = false;
                 }
             }
         }
