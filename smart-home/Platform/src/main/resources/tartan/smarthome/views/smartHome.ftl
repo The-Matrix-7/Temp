@@ -21,8 +21,10 @@ See -->
                 var armAlarm = $('#armAlarm').val();
                 var passcode = $('#alarmPasscode').val();
                 var hvacMode = $('#hvacMode').val();
+                var nightLockStart = $('#nightLockStart).val();
+                var nightLockEnd = $('#nightLockEnd).val();
 
-                return JSON.stringify({"door":door,"light":light,"targetTemp":targetTemp,"humidifier":humidifier,"alarmArmed":armAlarm,"alarmDelay":alarmDelay,"alarmPasscode":passcode});
+                return JSON.stringify({"door":door,"light":light,"targetTemp":targetTemp,"humidifier":humidifier,"alarmArmed":armAlarm,"alarmDelay":alarmDelay,"alarmPasscode":passcode, "nightLockStart":nightLockStart, "nightLockEnd":nightLockEnd});
             }
 
             // Auto scroll
@@ -180,6 +182,16 @@ div {
     <p>
         <strong>
             Alarm delay: <input id="alarmDelay" type="number" value="${tartanHome.alarmDelay}" /> seconds
+        </strong>
+    </p>
+    <p>
+        <strong>
+            Night Lock Start Time: <input id="nightLockStart" type="number" value="${tartanHome.nightLockStart}" /> seconds
+        </strong>
+    </p>
+    <p>
+        <strong>
+            Night Lock End Time: <input id="nightLockEnd" type="number" value="${tartanHome.nightLockEnd}" /> seconds
         </strong>
     </p>
     <hr>

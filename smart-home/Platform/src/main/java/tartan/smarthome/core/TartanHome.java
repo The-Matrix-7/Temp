@@ -66,6 +66,12 @@ public class TartanHome {
     @JsonProperty
     private String alarmArmed;
 
+    // night lock settings
+    @JsonProperty
+    private String nightLockStart;
+    @JsonProperty
+    private String nightLockEnd;
+
     // Properties that are not part of the historical record
     @JsonProperty
     private List<String> eventLog;
@@ -287,6 +293,39 @@ public class TartanHome {
     public void setAlarmDelay(String alarmDelay) {
         this.alarmDelay = alarmDelay;
     }
+
+    /**
+     * Get the night alarm start time
+     * @return the night alarm start time
+     */
+    public String getNightLockStart() {
+        return nightLockStart;
+    }
+
+    /**
+     * Set the night lock start time
+     * @param nightLockStart the new night lock end time
+     */
+    public void setNightLockStart(String nightLockStart) {
+        this.nightLockStart = nightLockStart;
+    }
+
+    /**
+     * Get the current night lock time
+     * @return the current night lock time
+     */
+    public String getNightLockEnd() {
+        return nightLockEnd;
+    }
+
+    /**
+     * Set the night lock time
+     * @param nightLockEnd the new end time
+     */
+    public void setNightLockEnd(String nightLockEnd) {
+        this.nightLockEnd = nightLockEnd;
+    }
+
 
     /**
      * Get the HVAC state
