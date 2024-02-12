@@ -121,9 +121,15 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 // close the door
                 doorState = false;
                 log.append(formatLogEntry("Closed door because house vacant"));
-            } else if (seconds > nightLockStart && seconds < nightLockEnd) {
-                // if the night lock is active, close the door
+            } else if ((nightLockStart < nightLockEnd && (seconds > nightLockStart && seconds < nightLockEnd))
+                        || (nightLockStart > nightLockEnd) && (seconds < nightLockEnd || seconds > nightLockStart)) {
+                // we need different conditions because the night lock should be ideally be able to be set
+                // to go through days. 
+                // first condition is if the end time is on the same day as the start time. if it is, check if current time is inbetween them.
+                // second condition is if the end time is on the next day. if it is, check if the current time is before the lock time would
+                // end, or if the current time is after it would be set.
                 doorState = false;
+                log.append(formatLogEntry("Closed door due to the Night Lock."));
             }
             else {
                 log.append(formatLogEntry("Door open"));
