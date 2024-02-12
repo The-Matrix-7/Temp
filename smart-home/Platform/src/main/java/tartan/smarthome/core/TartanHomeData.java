@@ -70,6 +70,14 @@ public class TartanHomeData {
     @Column(name = "alarm_delay")
     private String alarmDelay;
 
+    // the night lock alarm start time
+    @Column(name ="night_lock_start")
+    private String nightLockStart;
+
+    // the night lock alarm end time
+    @Column(name = "night_lock_end")
+    private String nightLockEnd;
+
     // the alarm enabled state
     @Column(name = "alarm_enabled_state")
     private String alarmArmed;
@@ -93,6 +101,8 @@ public class TartanHomeData {
         this.alarmActive = h.getAlarmActive();
         this.alarmDelay = h.getAlarmDelay();
         this.alarmArmed = h.getAlarmArmed();
+        this.nightLockStart = h.getNightLockStart();
+        this.nightLockEnd = h.getNightLockEnd();
 
         // Remember when this record is created
         this.createTimeStamp = new Date();
@@ -303,6 +313,39 @@ public class TartanHomeData {
     public void setAlarmDelay(String alarmDelay) {
         this.alarmDelay = alarmDelay;
     }
+
+    /**
+     * Get the night lock start time
+     * @return the current night lock start time
+     */
+    public String getNightLockStart() {
+        return nightLockStart;
+    }
+
+    /**
+     * Set the night lock start time
+     * @param nightLockStart the new night lock start time
+     */
+    public void setNightLockStart(String nightLockStart) {
+        this.nightLockStart = nightLockStart;
+    }
+
+    /**
+     * Get the night lock end time
+     * @return the current night lock end time
+     */
+    public String getNightLockEnd() {
+        return nightLockEnd;
+    }
+
+    /**
+     * Set the night lock end time
+     * @param nightLockEnd the new night lock end time
+     */
+    public void setNightLockEnd(String nightLockEnd) {
+        this.nightLockEnd = nightLockEnd;
+    }
+
 
     /**
      * Get the HVAC state
