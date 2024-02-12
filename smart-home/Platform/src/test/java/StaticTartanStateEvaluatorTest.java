@@ -161,8 +161,8 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.DOOR_STATE, true); // door is opened
 
         // set night lock times 
-        initialState.put(IoTValues.NIGHT_LOCK_START, String.valueOf(seconds+2));
-        initialState.put(IoTValues.NIGHT_LOCK_END, String.valueOf(seconds-2));
+        initialState.put(IoTValues.NIGHT_LOCK_START, String.valueOf(seconds-2));
+        initialState.put(IoTValues.NIGHT_LOCK_END, String.valueOf(seconds+2));
 
         // set proximity state to be occupied so that door doesnt auto close due to being vacant
         initialState.put(IoTValues.PROXIMITY_STATE, true); 

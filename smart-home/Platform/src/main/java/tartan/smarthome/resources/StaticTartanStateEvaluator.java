@@ -2,6 +2,7 @@ package tartan.smarthome.resources;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Integer tempReading = null; // the current temperature
         Integer targetTempSetting = null; // the user-desired temperature setting
         Integer humidityReading = null; // the current humidity
+        Integer nightLockStart = null; // the night lock start time
+        Integer nightLockEnd = null; // the night lock end time
         Boolean doorState = null; // the state of the door (true if open, false if closed)
         Boolean lightState = null; // the state of the light (true if on, false if off)
         Boolean proximityState = null; // the state of the proximity sensor (true of house occupied, false if vacant)
@@ -45,6 +48,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         String alarmPassCode = null;
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
         String givenPassCode = "";
+
 
         System.out.println("Evaluating new state statically");
 
@@ -82,6 +86,10 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 awayTimerState = (Boolean) inState.getOrDefault(key, false);
             } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
                 alarmActiveState = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.NIGHT_LOCK_START)) {
+                nightLockStart = Integer.valueOf(inState.get(key).toString());
+            } else if (key.equals(IoTValues.NIGHT_LOCK_END)) {
+                nightLockEnd = Integer.valueOf(inState.get(key).toString());
             }
         }
 
@@ -99,8 +107,11 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         // The door is now open
         if (doorState) {
-            if (!proximityState && alarmState) {
+            // get current time
+            LocalDateTime date = LocalDateTime.now();
+            int seconds = date.toLocalTime().toSecondOfDay();
 
+            if (!proximityState && alarmState) {
                 // door open and no one home and the alarm is set - sound alarm
                 log.append(formatLogEntry("Break in detected: Activating alarm"));
                 alarmActiveState = true;
@@ -110,7 +121,11 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 // close the door
                 doorState = false;
                 log.append(formatLogEntry("Closed door because house vacant"));
-            } else {
+            } else if (seconds > nightLockStart && seconds < nightLockEnd) {
+                // if the night lock is active, close the door
+                doorState = false;
+            }
+            else {
                 log.append(formatLogEntry("Door open"));
             }
 
