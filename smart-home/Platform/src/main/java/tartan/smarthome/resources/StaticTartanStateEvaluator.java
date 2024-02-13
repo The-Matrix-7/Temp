@@ -33,6 +33,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Integer targetTempSetting = null; // the user-desired temperature setting
         Integer humidityReading = null; // the current humidity
         Boolean doorState = null; // the state of the door (true if open, false if closed)
+        Boolean doorLocked = null; // state of door lock (true if locked,  false if unlocked)
         Boolean lightState = null; // the state of the light (true if on, false if off)
         Boolean proximityState = null; // the state of the proximity sensor (true of house occupied, false if vacant)
         Boolean alarmState = null; // the alarm state (true if enabled, false if disabled)
@@ -82,6 +83,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 awayTimerState = (Boolean) inState.getOrDefault(key, false);
             } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
                 alarmActiveState = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.DOOR_LOCK)) {
+                doorLocked = (Boolean) inState.get(key);
             }
         }
 

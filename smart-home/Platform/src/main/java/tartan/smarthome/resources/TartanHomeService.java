@@ -36,6 +36,7 @@ public class TartanHomeService {
     private String targetTemp;
     private String user;
     private String password;
+    private String doorLocked;
 
     // status parameters
     private HomeDAO homeDAO;
@@ -66,6 +67,8 @@ public class TartanHomeService {
         this.address = settings.getAddress();
         this.port = settings.getPort();
         this.authenticated = false;
+        this.doorLocked = settings.getDoorLocked();
+
 
         // User configuration
         this.targetTemp = settings.getTargetTemp();
@@ -337,6 +340,9 @@ public class TartanHomeService {
 
         tartanHome.setEventLog(controller.getLogMessages());
         tartanHome.setAuthenticated(String.valueOf(this.authenticated));
+
+        tartanHome.setDoorLocked(this.doorLocked);
+        
 
         Map<String, Object> state = null;
         synchronized (controller) {

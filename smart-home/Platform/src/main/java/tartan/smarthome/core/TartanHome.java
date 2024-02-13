@@ -34,6 +34,10 @@ public class TartanHome {
     @JsonProperty
     private String door;
 
+    // state of door locked (true if locked, false if unlocked)
+    @JsonProperty
+    private String doorLocked;
+
     // the state of the light (true if on, false if off)
     @JsonProperty
     private String light;
@@ -168,12 +172,30 @@ public class TartanHome {
         return this.door;
     }
 
+
     /**
      * Set the door state
      * @param door the new door state
      */
     public void setDoor(String door) {
         this.door = door;
+    }
+
+    /**
+     * Get the door lock state
+     * @return the door lock state
+     */
+    public String getDoorLocked() {
+        return this.doorLocked;
+    }
+    
+
+    /**
+     * Set the door lock state
+     * @return the door lock state
+     */
+    public void setDoorLocked(String doorLocked) {
+        this.doorLocked = doorLocked;
     }
 
     /**
