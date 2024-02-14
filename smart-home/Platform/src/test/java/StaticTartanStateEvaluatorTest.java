@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import tartan.smarthome.resources.StaticTartanStateEvaluator;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
@@ -200,6 +201,30 @@ public class StaticTartanStateEvaluatorTest {
     
     }
 
+    @Test
+    /**
+     * Checks if the appropriate intruder detection and all clear messages have been received by the access panel (log)
+     */
+    public void accessPanelLogTest() {
+        Map<String, Object> initialState = testState();
+        StringBuffer log = new StringBuffer();
 
+        // potential intruder detected by sensors
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // someone detected on property
+        initialState.put(IoTValues.DOOR_LOCK, true); // door is currently locked
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        // TODO: check if the person has a registered phone on them
 
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        
+        assertNotEquals(-1, log.lastIndexOf("Potential Intruder Detected"), "Access panel should display potential intruder message");
+
+        // all clear condition
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves the property
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertNotEquals(-1, log.lastIndexOf("All Clear; intruder no longer detected"), "Access panel should display all clear message");
+
+    }
 }
+
