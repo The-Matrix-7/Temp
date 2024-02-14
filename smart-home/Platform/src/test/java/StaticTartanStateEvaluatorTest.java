@@ -166,36 +166,36 @@ public class StaticTartanStateEvaluatorTest {
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
-        // make sure that everything is as it was after nothing happens
-        assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // Door should be locked when no one around
-        assertTrue((boolean) newState.get(IoTValues.ALARM_STATE), "Alarm should still be armed"); // alarm should be on
-        assertFalse((boolean) newState.get(IoTValues.PROXIMITY_STATE), "There should not be anything flagging proximity sensor"); // nothing triggering proximity
-        assertFalse((boolean) newState.get(IoTValues.LIGHT_STATE), "Lights should still be off"); // lights should still be off after nothing
-        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // Door should be locked when no one around
+        
+        assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still");
+        assertTrue((boolean) newState.get(IoTValues.ALARM_STATE), "Alarm should still be armed"); 
+        assertFalse((boolean) newState.get(IoTValues.PROXIMITY_STATE), "There should not be anything flagging proximity sensor");
+        assertFalse((boolean) newState.get(IoTValues.LIGHT_STATE), "Lights should still be off");
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); 
 
 
         // simulate a potential intruder
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
         initialState.put(IoTValues.DOOR_LOCK, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // registered user
+        // TODO: non registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // Door should be locked when no one around
-        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // Door should be locked when no one around
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // Door should be locked when no one around
 
 
         // simulate user that is not an intruder
-        initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
-        initialState.put(IoTValues.DOOR_LOCK, true); // door locked
-        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // registered user
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // TODO: potential intruder
+        initialState.put(IoTValues.DOOR_LOCK, true); // TODO: door locked
+        initialState.put(IoTValues.ALARM_STATE, true); // TODO: alarm is armed
+        // TODO: registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
-        assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // Door should be closed still?
-        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // Door should be unlocked when not an intruder
+        assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // door remains closed
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // door remains locked
 
     
     }

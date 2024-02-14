@@ -15,7 +15,7 @@ public abstract class IoTValues {
     public static final String HUMIDITY_READING = "HR";
     public static final String HUMIDIFIER_STATE = "HUS";
     public static final String DOOR_STATE = "DS";
-    public static final String DOOR_LOCK = "DL";
+    public static final String DOOR_LOCK = "DOOR_LOCK_STATE";
     public static final String LIGHT_STATE = "LS";
     public static final String PROXIMITY_STATE = "PS";
     public static final String ALARM_STATE = "AS";
