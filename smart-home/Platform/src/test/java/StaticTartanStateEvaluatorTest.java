@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import tartan.smarthome.resources.StaticTartanStateEvaluator;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
@@ -178,7 +179,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
         initialState.put(IoTValues.DOOR_LOCK, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // TODO: non registered user
+        // TODO: non-registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
@@ -187,9 +188,9 @@ public class StaticTartanStateEvaluatorTest {
 
 
         // simulate user that is not an intruder
-        initialState.put(IoTValues.PROXIMITY_STATE, true); // TODO: potential intruder
-        initialState.put(IoTValues.DOOR_LOCK, true); // TODO: door locked
-        initialState.put(IoTValues.ALARM_STATE, true); // TODO: alarm is armed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
+        initialState.put(IoTValues.DOOR_LOCK, true); // door locked
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         // TODO: registered user
 
         newState = evaluator.evaluateState(initialState, log);
@@ -200,6 +201,31 @@ public class StaticTartanStateEvaluatorTest {
     
     }
 
+    @Test
+    /**
+     * Checks if the appropriate intruder detection and all clear messages have been received by the access panel (log)
+     */
+    public void accessPanelLogTest() {
+        Map<String, Object> initialState = testState();
+        StringBuffer log = new StringBuffer();
 
+        // potential intruder detected by sensors
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // someone detected on property
+        initialState.put(IoTValues.DOOR_LOCK, true); // door is currently locked
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        // TODO: non-registered user
 
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        
+        assertNotEquals(-1, log.lastIndexOf("Potential Intruder Detected - locking door"), "Access panel should display potential intruder message");
+
+        // all clear condition
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves the property
+        
+        newState = evaluator.evaluateState(initialState, log);
+
+        assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
+
+    }
 }
+
