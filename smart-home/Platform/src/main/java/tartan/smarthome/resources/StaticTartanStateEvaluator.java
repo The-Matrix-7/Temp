@@ -131,8 +131,9 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
                 // door is locked due to a potential intruder
                 doorLocked = true;
-                //TODO: add intuderDetected update (true to disable  keyless and electronic forms of entry) when refactoring
+                intruderDetected = true;  // used to disable keyless and electronic forms of entry
                 log.append(formatLogEntry("Potential Intruder Detected - locking door"));
+
             } else {
                 log.append(formatLogEntry("Closed door"));
             }
@@ -144,7 +145,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             doorState = false;
             alarmState = true;
             awayTimerState = false;
-            //TODO: add doorState when refactoring
+            doorLocked = true;
         }
 
         // the user has arrived
@@ -166,7 +167,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         // remove this line as it will never run the code inside it: } else if (alarmState) { // attempt to disable alarm
 
             if (!proximityState) {  // house is empty and there is no intruder
-                // TODO: update intruderDetected (false to enable forms of entry as intruder has left the premises)
+                intruderDetected = false;   // all clear
                 log.append(formatLogEntry("All Clear - intruder no longer detected"));
                 alarmState = true;
 
@@ -205,6 +206,9 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             // Not enough information to evaluate alarm
             log.append(formatLogEntry("Warning: Not enough information to evaluate alarm"));
         }
+
+        
+        // TODO: only allow passcode and keyless entry when it is all clear (intruderDetected == false)
 
         // Is the heater needed?
         if (tempReading < targetTempSetting) {

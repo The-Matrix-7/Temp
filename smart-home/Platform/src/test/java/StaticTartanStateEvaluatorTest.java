@@ -179,7 +179,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
         initialState.put(IoTValues.DOOR_LOCK, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // TODO: non registered user
+        // TODO: non-registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
@@ -188,9 +188,9 @@ public class StaticTartanStateEvaluatorTest {
 
 
         // simulate user that is not an intruder
-        initialState.put(IoTValues.PROXIMITY_STATE, true); // TODO: potential intruder
-        initialState.put(IoTValues.DOOR_LOCK, true); // TODO: door locked
-        initialState.put(IoTValues.ALARM_STATE, true); // TODO: alarm is armed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
+        initialState.put(IoTValues.DOOR_LOCK, true); // door locked
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         // TODO: registered user
 
         newState = evaluator.evaluateState(initialState, log);
@@ -213,7 +213,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, true); // someone detected on property
         initialState.put(IoTValues.DOOR_LOCK, true); // door is currently locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // TODO: check if the person has a registered phone on them
+        // TODO: non-registered user
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         
@@ -221,8 +221,9 @@ public class StaticTartanStateEvaluatorTest {
 
         // all clear condition
         initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves the property
+        
         newState = evaluator.evaluateState(initialState, log);
-        System.out.println(log);
+
         assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
 
     }
