@@ -217,13 +217,13 @@ public class StaticTartanStateEvaluatorTest {
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         
-        assertNotEquals(-1, log.lastIndexOf("Potential Intruder Detected"), "Access panel should display potential intruder message");
+        assertNotEquals(-1, log.lastIndexOf("Potential Intruder Detected - locking door"), "Access panel should display potential intruder message");
 
         // all clear condition
         initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves the property
-
         newState = evaluator.evaluateState(initialState, log);
-        assertNotEquals(-1, log.lastIndexOf("All Clear; intruder no longer detected"), "Access panel should display all clear message");
+        System.out.println(log);
+        assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
 
     }
 }

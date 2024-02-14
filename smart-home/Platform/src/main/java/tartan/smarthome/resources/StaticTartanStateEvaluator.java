@@ -36,6 +36,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Boolean doorLocked = null; // state of door lock (true if locked,  false if unlocked)
         Boolean lightState = null; // the state of the light (true if on, false if off)
         Boolean proximityState = null; // the state of the proximity sensor (true of house occupied, false if vacant)
+        Boolean intruderDetected = false;  // true if sensors detect a potential intruder, false otherwise
         Boolean alarmState = null; // the alarm state (true if enabled, false if disabled)
         Boolean humidifierState = null; // the humidifier state (true if on, false if off)
         Boolean heaterOnState = null; // the heater state (true if on, false if off)
@@ -127,6 +128,11 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             if (alarmState && proximityState) {
                 log.append(formatLogEntry("Break in detected: Activating alarm"));
                 alarmActiveState = true;
+
+                // door is locked due to a potential intruder
+                doorLocked = true;
+                //TODO: add intuderDetected update (true to disable  keyless and electronic forms of entry) when refactoring
+                log.append(formatLogEntry("Potential Intruder Detected - locking door"));
             } else {
                 log.append(formatLogEntry("Closed door"));
             }
@@ -138,6 +144,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             doorState = false;
             alarmState = true;
             awayTimerState = false;
+            //TODO: add doorState when refactoring
         }
 
         // the user has arrived
@@ -158,7 +165,9 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         // remove this line as it will never run the code inside it: } else if (alarmState) { // attempt to disable alarm
 
-            if (!proximityState) {
+            if (!proximityState) {  // house is empty and there is no intruder
+                // TODO: update intruderDetected (false to enable forms of entry as intruder has left the premises)
+                log.append(formatLogEntry("All Clear - intruder no longer detected"));
                 alarmState = true;
 
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
@@ -270,6 +279,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         newState.put(IoTValues.HVAC_MODE, hvacSetting);
         newState.put(IoTValues.ALARM_PASSCODE, alarmPassCode);
         newState.put(IoTValues.GIVEN_PASSCODE, givenPassCode);
+        newState.put(IoTValues.DOOR_LOCK, doorLocked);
 
         return newState;
     }
