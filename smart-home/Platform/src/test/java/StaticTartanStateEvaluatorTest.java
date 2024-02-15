@@ -45,6 +45,8 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.AWAY_TIMER, false);
         initialState.put(IoTValues.ALARM_ACTIVE, false);
         initialState.put(IoTValues.DOOR_LOCK_STATE, false);
+        initialState.put(IoTValues.NIGHT_LOCK_START, "0");
+        initialState.put(IoTValues.NIGHT_LOCK_END, "0");
         return initialState;
     }
 
