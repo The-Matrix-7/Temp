@@ -12,6 +12,8 @@ William Wong - ccid: wzwong
 
 Angela Binobo - ccid: binobo
 
+Irele Uduokhai - ccid: uduokhai
+
 ## Building
 
 The build instructions can be found [here](./docs/build_instructions.md).
