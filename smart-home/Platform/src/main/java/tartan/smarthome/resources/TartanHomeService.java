@@ -67,11 +67,11 @@ public class TartanHomeService {
         this.address = settings.getAddress();
         this.port = settings.getPort();
         this.authenticated = false;
-        this.doorLocked = settings.getDoorLocked();
 
 
         // User configuration
         this.targetTemp = settings.getTargetTemp();
+        //this.doorLocked = settings.getDoorLocked();
         this.alarmDelay = settings.getAlarmDelay();
         this.alarmPasscode = settings.getAlarmPasscode();
 
@@ -223,6 +223,17 @@ public class TartanHomeService {
     private Boolean toIoTDoorState(TartanHome tartanHome) {
         if (tartanHome.getDoor().equals(TartanHomeValues.CLOSED)) return false;
         else if (tartanHome.getDoor().equals(TartanHomeValues.OPEN)) return true;
+        return null;
+    }
+
+    /**
+     * Convert door lock state
+     * @param tartanHome the home
+     * @return true if open; false if closed' otherwise null
+     */
+    private Boolean toIoTDoorLockState(TartanHome tartanHome) {
+        if (tartanHome.getDoorLocked().equals(TartanHomeValues.CLOSED)) return true;
+        else if (tartanHome.getDoorLocked().equals(TartanHomeValues.OPEN)) return false;
         return null;
     }
 

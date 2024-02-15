@@ -84,8 +84,10 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 awayTimerState = (Boolean) inState.getOrDefault(key, false);
             } else if (key.equals(IoTValues.ALARM_ACTIVE)) {
                 alarmActiveState = (Boolean) inState.get(key);
-            } else if (key.equals(IoTValues.DOOR_LOCK)) {
+            } else if (key.equals(IoTValues.DOOR_LOCK_STATE)) {
                 doorLocked = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.INTRUDER_DETECTED)) {
+                intruderDetected = (Boolean) inState.get(key);
             }
         }
 
@@ -167,9 +169,11 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         // remove this line as it will never run the code inside it: } else if (alarmState) { // attempt to disable alarm
 
             if (!proximityState) {  // house is empty and there is no intruder
-                intruderDetected = false;   // all clear
-                log.append(formatLogEntry("All Clear - intruder no longer detected"));
-                alarmState = true;
+                if (intruderDetected) {  // intruder was detected previously
+                    intruderDetected = false;   // all clear
+                    log.append(formatLogEntry("All Clear - intruder no longer detected"));
+                    alarmState = true;
+                }
 
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
             }
@@ -283,8 +287,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         newState.put(IoTValues.HVAC_MODE, hvacSetting);
         newState.put(IoTValues.ALARM_PASSCODE, alarmPassCode);
         newState.put(IoTValues.GIVEN_PASSCODE, givenPassCode);
-        newState.put(IoTValues.DOOR_LOCK, doorLocked);
-
+        newState.put(IoTValues.DOOR_LOCK_STATE, doorLocked);
+        newState.put(IoTValues.INTRUDER_DETECTED, intruderDetected);
         return newState;
     }
 }

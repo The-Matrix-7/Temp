@@ -43,7 +43,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.GIVEN_PASSCODE, "0");
         initialState.put(IoTValues.AWAY_TIMER, false);
         initialState.put(IoTValues.ALARM_ACTIVE, false);
-        initialState.put(IoTValues.DOOR_LOCK, false);
+        initialState.put(IoTValues.DOOR_LOCK_STATE, false);
         return initialState;
     }
 
@@ -163,7 +163,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, false); // house is empty/no one around
         initialState.put(IoTValues.DOOR_STATE, false); // door is closed
         initialState.put(IoTValues.LIGHT_STATE, false); // lights are off
-        initialState.put(IoTValues.DOOR_LOCK, true); // door is locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is locked
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
@@ -172,31 +172,31 @@ public class StaticTartanStateEvaluatorTest {
         assertTrue((boolean) newState.get(IoTValues.ALARM_STATE), "Alarm should still be armed"); 
         assertFalse((boolean) newState.get(IoTValues.PROXIMITY_STATE), "There should not be anything flagging proximity sensor");
         assertFalse((boolean) newState.get(IoTValues.LIGHT_STATE), "Lights should still be off");
-        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); 
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be locked still"); 
 
 
         // simulate a potential intruder
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
-        initialState.put(IoTValues.DOOR_LOCK, true); // door locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         // TODO: non-registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // Door should be locked when no one around
-        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // Door should be locked when no one around
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be locked still"); // Door should be locked when no one around
 
 
         // simulate user that is not an intruder
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
-        initialState.put(IoTValues.DOOR_LOCK, true); // door locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         // TODO: registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // door remains closed
-        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK), "Door should be locked still"); // door remains locked
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be locked still"); // door remains locked
 
     
     }
@@ -208,24 +208,38 @@ public class StaticTartanStateEvaluatorTest {
     public void accessPanelLogTest() {
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
+        
+        // initial conditions - no break in occurred
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // no one is on the property
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+
+        // check that there are no intruder detected or all clear messages displayed on the access panel
+        assertEquals(-1, log.lastIndexOf("Potential Intruder Detected - locking door"));  
+        assertEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"));
+
 
         // potential intruder detected by sensors
         initialState.put(IoTValues.PROXIMITY_STATE, true); // someone detected on property
-        initialState.put(IoTValues.DOOR_LOCK, true); // door is currently locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is currently locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
         // TODO: non-registered user
 
-        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
-        
+        newState = evaluator.evaluateState(initialState, log);
+
         assertNotEquals(-1, log.lastIndexOf("Potential Intruder Detected - locking door"), "Access panel should display potential intruder message");
 
+
         // all clear condition
+        initialState.put(IoTValues.INTRUDER_DETECTED, true);  // intruder was previously detected on the property
         initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves the property
         
-        newState = evaluator.evaluateState(initialState, log);
+        newState = evaluator.evaluateState(initialState, log);  
 
         assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
 
+        System.out.println(log);
     }
 }
 
