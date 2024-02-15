@@ -10,6 +10,9 @@ public abstract class TartanHomeValues {
     public static final String OPEN = "open";
     public static final String CLOSED = "closed";
 
+    public static final String UNLOCKED = "unlocked";
+    public static final String LOCKED = "locked";
+
     public static final String OCCUPIED = "occupied";
     public static final String EMPTY = "empty";
 

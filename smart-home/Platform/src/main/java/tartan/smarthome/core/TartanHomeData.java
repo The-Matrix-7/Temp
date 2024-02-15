@@ -43,6 +43,7 @@ public class TartanHomeData {
     @Column(name = "door_state")
     private String door;
 
+    // the state of the smart door lock (true if locked, false if unlocked)
     @Column(name = "door_locked")
     private String doorLocked;
 
