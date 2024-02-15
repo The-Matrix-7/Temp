@@ -113,10 +113,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         // The door is now open
         if (doorState) {
-            // get current time
-            LocalDateTime date = LocalDateTime.now();
-            int seconds = date.toLocalTime().toSecondOfDay();
-
             if (!proximityState && alarmState) {
                 // door open and no one home and the alarm is set - sound alarm
                 log.append(formatLogEntry("Break in detected: Activating alarm"));
@@ -127,16 +123,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 // close the door
                 doorState = false;
                 log.append(formatLogEntry("Closed door because house vacant"));
-            } else if ((nightLockStart < nightLockEnd && (seconds > nightLockStart && seconds < nightLockEnd))
-                        || (nightLockStart > nightLockEnd) && (seconds < nightLockEnd || seconds > nightLockStart)) {
-                // we need different conditions because the night lock should be ideally be able to be set
-                // to go through days. 
-                // first condition is if the end time is on the same day as the start time. if it is, check if current time is inbetween them.
-                // second condition is if the end time is on the next day. if it is, check if the current time is before the lock time would
-                // end, or if the current time is after it would be set.
-                doorState = false;
-                log.append(formatLogEntry("Closed door due to the Night Lock."));
-            }
+            } 
             else {
                 log.append(formatLogEntry("Door open"));
             }
@@ -161,6 +148,23 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 log.append(formatLogEntry("Closed door"));
             }
         }
+
+        if(!doorLocked) {
+            // get current time
+            LocalDateTime date = LocalDateTime.now();
+            int seconds = date.toLocalTime().toSecondOfDay();
+            if ((nightLockStart < nightLockEnd && (seconds > nightLockStart && seconds < nightLockEnd)) || 
+                (nightLockStart > nightLockEnd) && (seconds < nightLockEnd || seconds > nightLockStart)) {
+                // we need different conditions because the night lock should be ideally be able to be set
+                // to go through days. 
+                // first condition is if the end time is on the same day as the start time. if it is, check if current time is inbetween them.
+                // second condition is if the end time is on the next day. if it is, check if the current time is before the lock time would
+                // end, or if the current time is after it would be set.
+                doorLocked = true;
+                log.append(formatLogEntry("Closed door due to the Night Lock."));
+            }
+        }
+
 
         // Auto lock the house
         if (awayTimerState == true) {

@@ -160,7 +160,7 @@ public class StaticTartanStateEvaluatorTest {
 
         // set mock state
         Map<String, Object> initialState = testState();
-        initialState.put(IoTValues.DOOR_STATE, true); // door is opened
+        initialState.put(IoTValues.DOOR_LOCK_STATE, false); // door is opened
 
         // set night lock times 
         initialState.put(IoTValues.NIGHT_LOCK_START, String.valueOf(seconds-2));
@@ -172,9 +172,9 @@ public class StaticTartanStateEvaluatorTest {
         // evaluate
         StringBuffer log = new StringBuffer();
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
-        //System.out.println(newState);
-        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
-        assertFalse(newDoorState, "Door should not be open while it is in between the start and end times of the night lock.");
+        System.out.println(newState);
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_LOCK_STATE);
+        assertTrue(newDoorState, "Door should not be open while it is in between the start and end times of the night lock.");
         
     }
 
