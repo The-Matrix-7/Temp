@@ -172,8 +172,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 if (intruderDetected) {  // intruder was detected previously
                     intruderDetected = false;   // all clear
                     log.append(formatLogEntry("All Clear - intruder no longer detected"));
-                    alarmState = true;
                 }
+                alarmState = true;
 
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
             }
