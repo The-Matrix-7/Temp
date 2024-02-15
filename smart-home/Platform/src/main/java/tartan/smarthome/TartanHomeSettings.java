@@ -43,6 +43,10 @@ public class TartanHomeSettings {
 
     @NotEmpty
     @JsonProperty
+    private String doorLocked;
+
+    @NotEmpty
+    @JsonProperty
     private String nightLockStart;
 
     @NotEmpty
@@ -106,6 +110,10 @@ public class TartanHomeSettings {
     public String getAlarmPasscode() { return alarmPasscode;  }
 
     public void setAlarmPasscode(String alarmPasscode) { this.alarmPasscode = alarmPasscode;  }
+
+    public String getDoorLocked() {return doorLocked;}
+
+    public void setDoorLocked(String doorLocked) {this.doorLocked = doorLocked; }
 
     public String getNightLockStart() {
         return nightLockStart;

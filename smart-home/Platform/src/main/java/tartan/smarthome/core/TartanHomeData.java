@@ -43,6 +43,10 @@ public class TartanHomeData {
     @Column(name = "door_state")
     private String door;
 
+    // the state of the smart door lock (true if locked, false if unlocked)
+    @Column(name = "door_locked")
+    private String doorLocked;
+
     // the state of the light (true if on, false if off)
     @Column(name = "light_state")
     private String light;
@@ -93,6 +97,7 @@ public class TartanHomeData {
         this.temperature = h.getTemperature();
         this.humidity = h.getHumidity();
         this.door = h.getDoor();
+        this.doorLocked = h.getDoorLocked();
         this.light = h.getLight();
         this.humidifier = h.getHumidifier();
         this.proximity = h.getProximity();
@@ -200,6 +205,23 @@ public class TartanHomeData {
      */
     public void setDoor(String door) {
         this.door = door;
+    }
+
+    /**
+     * Get the door lock state
+     * @return the door lock state
+     */
+    public String getDoorLocked() {
+        return doorLocked;
+    }
+    
+
+    /**
+     * Set the door lock state
+     * @return the door lock state
+     */
+    public void setDoorLocked(String doorLocked) {
+        this.doorLocked = doorLocked;
     }
 
     /**

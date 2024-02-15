@@ -15,6 +15,7 @@ public abstract class IoTValues {
     public static final String HUMIDITY_READING = "HR";
     public static final String HUMIDIFIER_STATE = "HUS";
     public static final String DOOR_STATE = "DS";
+    public static final String DOOR_LOCK_STATE = "DOOR_LOCK_STATE";
     public static final String LIGHT_STATE = "LS";
     public static final String PROXIMITY_STATE = "PS";
     public static final String ALARM_STATE = "AS";
@@ -34,6 +35,9 @@ public abstract class IoTValues {
 
     public static final String DOOR_CLOSE = "0";
     public static final String DOOR_OPEN = "1";
+
+    public static final String DOOR_UNLOCKED = "0";
+    public static final String DOOR_LOCKED = "1";
 
     public static final String LIGHT_ON = "1";
     public static final String LIGHT_OFF = "0";
@@ -61,6 +65,9 @@ public abstract class IoTValues {
 
     public static final String NIGHT_LOCK_START = "NIGHT_LOCK_START";
     public static final String NIGHT_LOCK_END = "NIGHT_LOCK_END";
+
+    public static final String INTRUDER_DETECTED = "ID";
+
 
     public static final String GET_STATE = "GS";
     public static final String SET_STATE = "SS";
