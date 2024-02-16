@@ -126,8 +126,8 @@ public class StaticTartanStateEvaluatorTest {
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
-        System.out.println("New State: " + newState);
-        System.out.println("Log: " + log);
+        //System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
 
         assertEquals(true, newState.get(IoTValues.ALARM_STATE),
                 "Alarm should be not be disabled with incorrect passcode"); // try the wrong code
@@ -139,12 +139,25 @@ public class StaticTartanStateEvaluatorTest {
 
         newState = evaluator.evaluateState(initialState, log);
 
-        System.out.println("New State: " + newState);
-        System.out.println("Log: " + log);
+       // System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
 
-        assertEquals(false, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with correct passcode"); // try
-                                                                                                                     // correct
-                                                                                                                     // code
+        assertEquals(false, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with correct passcode"); // try correct code
+
+        // test no passcode given
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no code
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is not empty
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+
+        newState = evaluator.evaluateState(initialState, log);
+
+        //System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
+
+        assertEquals(true, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with no passcode"); // try correct code
+
+
     }
 
 
@@ -164,10 +177,12 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.DOOR_STATE, false); // door is closed
         initialState.put(IoTValues.LIGHT_STATE, false); // lights are off
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is locked
+        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no passcode
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
-        
+        System.out.println("New State: " + newState);
+        System.out.println("Log: " + log);
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still");
         assertTrue((boolean) newState.get(IoTValues.ALARM_STATE), "Alarm should still be armed"); 
         assertFalse((boolean) newState.get(IoTValues.PROXIMITY_STATE), "There should not be anything flagging proximity sensor");

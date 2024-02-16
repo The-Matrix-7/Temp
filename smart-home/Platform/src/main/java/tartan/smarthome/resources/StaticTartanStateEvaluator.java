@@ -33,10 +33,10 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Integer targetTempSetting = null; // the user-desired temperature setting
         Integer humidityReading = null; // the current humidity
         Boolean doorState = null; // the state of the door (true if open, false if closed)
-        Boolean doorLocked = null; // state of door lock (true if locked,  false if unlocked)
+        Boolean doorLocked = null; // state of door lock (true if locked, false if unlocked)
         Boolean lightState = null; // the state of the light (true if on, false if off)
         Boolean proximityState = null; // the state of the proximity sensor (true of house occupied, false if vacant)
-        Boolean intruderDetected = false;  // true if sensors detect a potential intruder, false otherwise
+        Boolean intruderDetected = false; // true if sensors detect a potential intruder, false otherwise
         Boolean alarmState = null; // the alarm state (true if enabled, false if disabled)
         Boolean humidifierState = null; // the humidifier state (true if on, false if off)
         Boolean heaterOnState = null; // the heater state (true if on, false if off)
@@ -133,7 +133,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
                 // door is locked due to a potential intruder
                 doorLocked = true;
-                intruderDetected = true;  // used to disable keyless and electronic forms of entry
+                intruderDetected = true; // used to disable keyless and electronic forms of entry
                 log.append(formatLogEntry("Potential Intruder Detected - locking door"));
 
             } else {
@@ -162,15 +162,16 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
 
         }
 
-        // alarm is currently on
+        // alarm is currently armed
         if (alarmState) {
             log.append(formatLogEntry("Alarm enabled"));
 
-        // remove this line as it will never run the code inside it: } else if (alarmState) { // attempt to disable alarm
+            // remove this line as it will never run the code inside it: } else if
+            // (alarmState) { // attempt to disable alarm
 
-            if (!proximityState) {  // house is empty and there is no intruder
-                if (intruderDetected) {  // intruder was detected previously
-                    intruderDetected = false;   // all clear
+            if (!proximityState) { // house is empty and there is no intruder
+                if (intruderDetected) { // intruder was detected previously
+                    intruderDetected = false; // all clear
                     log.append(formatLogEntry("All Clear - intruder no longer detected"));
                 }
                 alarmState = true;
@@ -178,16 +179,18 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
             }
 
-            if (alarmActiveState) {
-                if (givenPassCode.length() > 0 && givenPassCode.compareTo(alarmPassCode) != 0) {
-                    log.append(formatLogEntry("Cannot disable alarm, invalid passcode given"));
-                    alarmState = true;
+            // removed if (alarmActiveState) because alarm should not need to be sounding to be attempted to be disarmed
+            if ((givenPassCode.length() > 0 && givenPassCode.compareTo(alarmPassCode) != 0)
+                    || givenPassCode.length() == 0) {
+                log.append(formatLogEntry("Cannot disable alarm, invalid passcode given"));
+                alarmState = true;
+                alarmActiveState = false;
 
-                } else {
-                    log.append(formatLogEntry("Correct passcode entered, disabled alarm"));
-                    alarmState = false;
-                }
+            } else {
+                log.append(formatLogEntry("Correct passcode entered, disabled alarm"));
+                alarmState = false;
             }
+
         }
 
         if (!alarmState) {
@@ -211,8 +214,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             log.append(formatLogEntry("Warning: Not enough information to evaluate alarm"));
         }
 
-        
-        // TODO: only allow passcode and keyless entry when it is all clear (intruderDetected == false)
+        // TODO: only allow passcode and keyless entry when it is all clear
+        // (intruderDetected == false)
 
         // Is the heater needed?
         if (tempReading < targetTempSetting) {
