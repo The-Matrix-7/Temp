@@ -281,6 +281,12 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             humidifierState = false;
         }
 
+        // Keyless Entry
+        if (ownersPhoneNearby == true) {
+            doorLocked = false;
+            log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
+        }
+
         Map<String, Object> newState = new Hashtable<>();
         newState.put(IoTValues.DOOR_STATE, doorState);
         newState.put(IoTValues.AWAY_TIMER, awayTimerState);
