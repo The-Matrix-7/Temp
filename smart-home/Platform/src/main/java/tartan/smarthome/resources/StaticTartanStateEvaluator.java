@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
+
 import tartan.smarthome.resources.iotcontroller.IoTValues;
 
 public class StaticTartanStateEvaluator implements TartanStateEvaluator {
@@ -45,6 +46,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Boolean awayTimerState = false; // assume that the away timer did not trigger this evaluation
         Boolean awayTimerAlreadySet = false;
         String alarmPassCode = null;
+        Boolean ownersPhoneNearby = null;
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
         String givenPassCode = "";
 
@@ -88,6 +90,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 doorLocked = (Boolean) inState.get(key);
             } else if (key.equals(IoTValues.INTRUDER_DETECTED)) {
                 intruderDetected = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.OWNERS_PHONE_NEARBY)) {
+                ownersPhoneNearby = (Boolean) inState.get(key);
             }
         }
 
@@ -179,7 +183,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 log.append(formatLogEntry("Cannot disable the alarm, house is empty"));
             }
 
-            // removed if (alarmActiveState) because alarm should not need to be sounding to be attempted to be disarmed
+            // removed if (alarmActiveState) because alarm should not need to be sounding to
+            // be attempted to be disarmed
             if ((givenPassCode.length() > 0 && givenPassCode.compareTo(alarmPassCode) != 0)
                     || givenPassCode.length() == 0) {
                 log.append(formatLogEntry("Cannot disable alarm, invalid passcode given"));
@@ -292,6 +297,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         newState.put(IoTValues.GIVEN_PASSCODE, givenPassCode);
         newState.put(IoTValues.DOOR_LOCK_STATE, doorLocked);
         newState.put(IoTValues.INTRUDER_DETECTED, intruderDetected);
+        newState.put(IoTValues.OWNERS_PHONE_NEARBY, ownersPhoneNearby);
         return newState;
     }
 }
