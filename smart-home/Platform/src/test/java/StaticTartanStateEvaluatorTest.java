@@ -45,6 +45,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.AWAY_TIMER, false);
         initialState.put(IoTValues.ALARM_ACTIVE, false);
         initialState.put(IoTValues.DOOR_LOCK_STATE, false);
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false);
         initialState.put(IoTValues.NIGHT_LOCK_START, "0");
         initialState.put(IoTValues.NIGHT_LOCK_END, "0");
         return initialState;
@@ -104,13 +105,81 @@ public class StaticTartanStateEvaluatorTest {
     public void r3Test() {
         StringBuffer log = new StringBuffer();
         Map<String, Object> initialState = testState();
+
+        // initial conditions
         initialState.put(IoTValues.DOOR_STATE, true); // door is open
-        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertTrue(newDoorState, "Door is open if no break in is detected and resident is in their house");
+
+
+        // resident leaves property
+        initialState.put(IoTValues.DOOR_STATE, true); // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
+
+
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
         assertFalse(newDoorState, "Door should not be open while the house is vacant");
+
     }
+
+    @Test
+    /**
+     * Checks if door remains closed regardless of if the alarm is armed or the proximity sensor detects anything 
+     */
+    public void doorRemainsClosed() {
+        StringBuffer log = new StringBuffer();
+        Map<String, Object> initialState = testState();
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
+
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+    }
+
+
+    @Test
+    /**
+     * Checks if the system does not change the state of the door when a possible break in is detected
+     */
+    public void doorStateBreakInDetected() {
+        StringBuffer log = new StringBuffer();
+        Map<String, Object> initialState = testState();
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        Map<String, Object>newState = evaluator.evaluateState(initialState, log);
+        Boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+
+        initialState.put(IoTValues.DOOR_STATE, true); // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertTrue(newDoorState, "Door should remain open");
+
+    }
+
 
     @Test
     /**
@@ -129,8 +198,8 @@ public class StaticTartanStateEvaluatorTest {
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
-        System.out.println("New State: " + newState);
-        System.out.println("Log: " + log);
+        //System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
 
         assertEquals(true, newState.get(IoTValues.ALARM_STATE),
                 "Alarm should be not be disabled with incorrect passcode"); // try the wrong code
@@ -142,12 +211,25 @@ public class StaticTartanStateEvaluatorTest {
 
         newState = evaluator.evaluateState(initialState, log);
 
-        System.out.println("New State: " + newState);
-        System.out.println("Log: " + log);
+       // System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
 
-        assertEquals(false, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with correct passcode"); // try
-                                                                                                                     // correct
-                                                                                                                     // code
+        assertEquals(false, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with correct passcode"); // try correct code
+
+        // test no passcode given
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no code
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is not empty
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+
+        newState = evaluator.evaluateState(initialState, log);
+
+        //System.out.println("New State: " + newState);
+        //System.out.println("Log: " + log);
+
+        assertEquals(true, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with no passcode"); // try correct code
+
+
     }
 
     @Test
@@ -197,10 +279,12 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.DOOR_STATE, false); // door is closed
         initialState.put(IoTValues.LIGHT_STATE, false); // lights are off
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is locked
+        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no passcode
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
-        
+        System.out.println("New State: " + newState);
+        System.out.println("Log: " + log);
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still");
         assertTrue((boolean) newState.get(IoTValues.ALARM_STATE), "Alarm should still be armed"); 
         assertFalse((boolean) newState.get(IoTValues.PROXIMITY_STATE), "There should not be anything flagging proximity sensor");
@@ -231,6 +315,14 @@ public class StaticTartanStateEvaluatorTest {
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // door remains closed
         assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be locked still"); // door remains locked
 
+        // simulate all clear condition
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves
+        initialState.put(IoTValues.INTRUDER_DETECTED, true);  // intruder was previously detected on the property
+        
+        newState = evaluator.evaluateState(initialState, log);
+        
+        assertFalse((boolean) newState.get(IoTValues.INTRUDER_DETECTED), "All clear - no intruder should be detected"); // door remains locked
+        
     
     }
 
@@ -273,6 +365,45 @@ public class StaticTartanStateEvaluatorTest {
         assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
 
         System.out.println(log);
+    }
+
+    @Test
+    /**
+     * Tests the keyless entry functionality, ensuring that the door unlocks when
+     * the owner's phone is nearby and remains unchanged otherwise.
+     */
+    public void testKeylessEntry() {
+        Map<String, Object> initialState = testState();
+        StringBuffer log = new StringBuffer();
+
+        // Test 1: Door locked, phone not nearby
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // Door initially locked
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
+
+        // Evaluate the state and assert that the door remains locked
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain locked");
+
+        // Change the owner's phone state to nearby
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true);
+
+        // Evaluate the state again and assert that the door is unlocked
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be unlocked");
+
+        // Test 2: Door unlocked, phone nearby
+        initialState.put(IoTValues.DOOR_LOCK_STATE, false); // Door initially unlocked
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true); // Phone nearby
+
+        // Assert that the door remains unlocked
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
+
+        // Change the door state to locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true);
+
+        // Evaluate the state again and assert that the door remains unlocked
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
     }
 }
 

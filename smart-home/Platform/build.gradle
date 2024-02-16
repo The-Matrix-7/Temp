@@ -1,5 +1,10 @@
+/**REFERENCES: 
+* -- to set up pitest: https://medium.com/javarevisited/mutation-testing-with-pitest-and-spring-boot-78ce335cb90c
+*/
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'jacoco'
+    id 'info.solidsoft.pitest' version '1.7.4'
 }
 
 group 'Tartan'
@@ -12,6 +17,27 @@ mainClassName = 'tartan.smarthome.TartanHomeApplication'
 
 sourceCompatibility = 11
 targetCompatibility = 11
+
+pitest {
+ targetClasses = ['tartan.smarthome.resources.StaticTartanStateEvaluator']
+ targetTests = ['StaticTartanStateEvaluatorTest']
+ outputFormats = ['HTML']
+ timestampedReports = false
+ junit5PluginVersion = '0.15'
+}
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        html.required = true
+    }
+}
 
 repositories {
     mavenLocal()

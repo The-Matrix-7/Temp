@@ -23,7 +23,7 @@ public abstract class IoTValues {
     public static final String ALARM_ACTIVE = "AA";
     public static final String HEATER_STATE = "HES";
     public static final String CHILLER_STATE = "CHS";
-   
+
     // protocol control values
     public static final String PARAM_DELIM = ";";
     public static final String MSG_DELIM = ":";
@@ -45,7 +45,7 @@ public abstract class IoTValues {
     public static final String HUMIDIFIER_ON = "1";
     public static final String HUMIDIFIER_OFF = "0";
 
-    public static final String ALARM_ENABLED  = "1";
+    public static final String ALARM_ENABLED = "1";
     public static final String ALARM_DISABLED = "0";
 
     public static final String ALARM_ON = "1";
@@ -68,6 +68,7 @@ public abstract class IoTValues {
 
     public static final String INTRUDER_DETECTED = "ID";
 
+    public static final String OWNERS_PHONE_NEARBY = "OPN";
 
     public static final String GET_STATE = "GS";
     public static final String SET_STATE = "SS";
@@ -75,5 +76,5 @@ public abstract class IoTValues {
 
     public static final String SETTINGS_FILE = "settings.txt";
     public static final String USERS_DB = "users.txt";
-	public static final String AWAY_TIMER = "AW";
+    public static final String AWAY_TIMER = "AW";
 }
