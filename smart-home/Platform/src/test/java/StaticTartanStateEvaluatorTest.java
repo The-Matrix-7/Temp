@@ -282,6 +282,14 @@ public class StaticTartanStateEvaluatorTest {
         assertFalse((boolean) newState.get(IoTValues.DOOR_STATE), "Door should be closed still"); // door remains closed
         assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be locked still"); // door remains locked
 
+        // simulate all clear condition
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // potential intruder leaves
+        initialState.put(IoTValues.INTRUDER_DETECTED, true);  // intruder was previously detected on the property
+        
+        newState = evaluator.evaluateState(initialState, log);
+        
+        assertFalse((boolean) newState.get(IoTValues.INTRUDER_DETECTED), "All clear - no intruder should be detected"); // door remains locked
+        
     
     }
 
