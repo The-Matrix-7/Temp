@@ -48,6 +48,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         String alarmPassCode = null;
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
         String givenPassCode = "";
+        String lockPasscode = "";
+        String givenLockPasscode = "";
 
         System.out.println("Evaluating new state statically");
 
@@ -91,6 +93,10 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 intruderDetected = (Boolean) inState.get(key);
             } else if (key.equals(IoTValues.OWNERS_PHONE_NEARBY)) {
                 ownersPhoneNearby = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.LOCKED_PASSCODE)) {
+                lockPasscode = (String) inState.get(key);
+            }else if (key.equals(IoTValues.GIVEN_LOCKED_PASSCODE)) {
+                givenLockPasscode = (String) inState.get(key);
             }
         }
 
@@ -218,9 +224,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             log.append(formatLogEntry("Warning: Not enough information to evaluate alarm"));
         }
 
-        // TODO: only allow passcode and keyless entry when it is all clear
-        // (intruderDetected == false)
-
         // Is the heater needed?
         if (tempReading < targetTempSetting) {
             log.append(formatLogEntry("Turning on heater, target temperature = " + targetTempSetting
@@ -281,11 +284,32 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             humidifierState = false;
         }
 
-        // Keyless Entry
-        if (ownersPhoneNearby) {
-            doorLocked = false;
-            log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
+        if (!intruderDetected) {
+            if (ownersPhoneNearby) {    // Keyless Entry
+                doorLocked = false;
+                log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
+            } else { if (doorLocked) {      // electronic operation
+                    // Check if a passcode is required for locking
+                    if (!lockPasscode.isEmpty()) {
+                        // A passcode is required for locking, check if the given passcode matches
+                        if (givenLockPasscode.compareTo(lockPasscode) != 0) {
+                            // Incorrect passcode, log and keep the door locked
+                            log.append(formatLogEntry("Incorrect passcode given for locking the door"));
+                            doorLocked = true;
+                        } else {
+                            // Correct passcode, unlock the door
+                            doorLocked = false;
+                            log.append(formatLogEntry("Door unlocked successfully with the correct passcode"));
+                        }
+                    } else {
+                        // No passcode required for locking, unlock the door
+                        doorLocked = false;
+                        log.append(formatLogEntry("Door unlocked successfully"));
+                    }
+                }
+             }
         }
+    
 
         Map<String, Object> newState = new Hashtable<>();
         newState.put(IoTValues.DOOR_STATE, doorState);

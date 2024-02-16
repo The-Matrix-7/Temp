@@ -33,6 +33,7 @@ public class TartanHomeService {
     private Integer port;
     private String alarmDelay;
     private String alarmPasscode;
+    private String lockedPasscode;
     private String targetTemp;
     private String user;
     private String password;
@@ -73,6 +74,7 @@ public class TartanHomeService {
         //this.doorLocked = settings.getDoorLocked();
         this.alarmDelay = settings.getAlarmDelay();
         this.alarmPasscode = settings.getAlarmPasscode();
+        this.lockedPasscode = settings.getAlarmPasscode();
 
         this.historyTimer = historyTimer*1000;
         this.logHistory = true;
@@ -87,6 +89,8 @@ public class TartanHomeService {
         userSettings.put(IoTValues.ALARM_DELAY, Integer.parseInt(this.alarmDelay));
         userSettings.put(IoTValues.TARGET_TEMP, Integer.parseInt(this.targetTemp));
         userSettings.put(IoTValues.ALARM_PASSCODE, this.alarmPasscode);
+        userSettings.put(IoTValues.LOCKED_PASSCODE, this.lockedPasscode);
+
         controller.updateSettings(userSettings);
 
         LOGGER.info("House " + this.name + " configured");
@@ -224,6 +228,16 @@ public class TartanHomeService {
         else if (tartanHome.getDoor().equals(TartanHomeValues.OPEN)) return true;
         return null;
     }
+
+    /**
+     * Convert locked state
+     * @param tartanHome the home
+     * @return the locked passcode
+     */
+    private String toIoTLockedPasscode(TartanHome tartanHome) {
+        return tartanHome.getDoorLockPasscode();
+    }
+
 
     /**
      * Convert door lock state
