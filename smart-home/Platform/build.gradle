@@ -1,5 +1,6 @@
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'jacoco'
 }
 
 group 'Tartan'
@@ -17,6 +18,21 @@ repositories {
     mavenLocal()
     mavenCentral()
 }
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        html.required = true
+    }
+}
+
+
 
 dependencies {
     // JAX-B dependencies for JDK 9+
