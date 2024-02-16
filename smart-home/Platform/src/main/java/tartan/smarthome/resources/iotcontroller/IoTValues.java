@@ -64,6 +64,9 @@ public abstract class IoTValues {
     public static final String GIVEN_PASSCODE = "GIVEN_PASSCODE";
 
     public static final String INTRUDER_DETECTED = "ID";
+    
+    public static final String LOCKED_PASSCODE = "LOCKED_PASSCODE";
+    public static final String GIVEN_LOCKED_PASSCODE = "GIVEN_LOCKED_PASSCODE";
 
     public static final String OWNERS_PHONE_NEARBY = "OPN";
 
