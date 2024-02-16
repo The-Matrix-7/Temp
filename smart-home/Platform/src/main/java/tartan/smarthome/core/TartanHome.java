@@ -1,6 +1,8 @@
 package tartan.smarthome.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -70,6 +72,12 @@ public class TartanHome {
     @JsonProperty
     private String alarmArmed;
 
+    // night lock settings
+    @JsonProperty
+    private String nightLockStart;
+    @JsonProperty
+    private String nightLockEnd;
+
     // Properties that are not part of the historical record
     @JsonProperty
     private List<String> eventLog;
@@ -79,6 +87,9 @@ public class TartanHome {
 
     @JsonProperty
     private String alarmPasscode;
+
+    @JsonProperty
+    private String doorLockPasscode;
 
     /**
      * Empty constructor needed by Jackson deserialization
@@ -311,6 +322,39 @@ public class TartanHome {
     }
 
     /**
+     * Get the night alarm start time
+     * @return the night alarm start time
+     */
+    public String getNightLockStart() {
+        return nightLockStart;
+    }
+
+    /**
+     * Set the night lock start time
+     * @param nightLockStart the new night lock end time
+     */
+    public void setNightLockStart(String nightLockStart) {
+        this.nightLockStart = nightLockStart;
+    }
+
+    /**
+     * Get the current night lock time
+     * @return the current night lock time
+     */
+    public String getNightLockEnd() {
+        return nightLockEnd;
+    }
+
+    /**
+     * Set the night lock time
+     * @param nightLockEnd the new end time
+     */
+    public void setNightLockEnd(String nightLockEnd) {
+        this.nightLockEnd = nightLockEnd;
+    }
+
+
+    /**
      * Get the HVAC state
      * @return the current state
      */
@@ -363,6 +407,18 @@ public class TartanHome {
      * @param alarmPasscode the new passcode
      */
     public void setAlarmPasscode(String alarmPasscode) { this.alarmPasscode = alarmPasscode; }
+
+    /**
+     * Get the door lock passcode
+     * @return the passcode
+     */
+    public String getDoorLockPasscode() { return doorLockPasscode; }
+
+    /**
+     * Set the alarm passcode
+     * @param lockPasscode the new passcode
+     */
+    public void setDoorLockPasscode(String doorLockPasscode) { this.doorLockPasscode = doorLockPasscode; }
 
     @Override
     public boolean equals(Object o) {

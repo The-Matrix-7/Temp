@@ -33,6 +33,9 @@ public class TartanHomeService {
     private Integer port;
     private String alarmDelay;
     private String alarmPasscode;
+    private String nightLockStart;
+    private String nightLockEnd;
+    private String lockedPasscode;
     private String targetTemp;
     private String user;
     private String password;
@@ -73,6 +76,9 @@ public class TartanHomeService {
         //this.doorLocked = settings.getDoorLocked();
         this.alarmDelay = settings.getAlarmDelay();
         this.alarmPasscode = settings.getAlarmPasscode();
+        this.lockedPasscode = settings.getAlarmPasscode();
+        this.nightLockStart = settings.getNightLockStart();
+        this.nightLockEnd = settings.getNightLockEnd();
 
         this.historyTimer = historyTimer*1000;
         this.logHistory = true;
@@ -87,6 +93,8 @@ public class TartanHomeService {
         userSettings.put(IoTValues.ALARM_DELAY, Integer.parseInt(this.alarmDelay));
         userSettings.put(IoTValues.TARGET_TEMP, Integer.parseInt(this.targetTemp));
         userSettings.put(IoTValues.ALARM_PASSCODE, this.alarmPasscode);
+        userSettings.put(IoTValues.LOCKED_PASSCODE, this.lockedPasscode);
+
         controller.updateSettings(userSettings);
 
         LOGGER.info("House " + this.name + " configured");
@@ -226,6 +234,16 @@ public class TartanHomeService {
     }
 
     /**
+     * Convert locked state
+     * @param tartanHome the home
+     * @return the locked passcode
+     */
+    private String toIoTLockedPasscode(TartanHome tartanHome) {
+        return tartanHome.getDoorLockPasscode();
+    }
+
+
+    /**
      * Convert door lock state
      * @param tartanHome the home
      * @return true if open; false if closed' otherwise null
@@ -347,6 +365,8 @@ public class TartanHomeService {
 
         tartanHome.setTargetTemp(this.targetTemp);
         tartanHome.setAlarmDelay(this.alarmDelay);
+        tartanHome.setNightLockStart(this.nightLockStart);
+        tartanHome.setNightLockEnd(this.nightLockEnd);
 
         tartanHome.setEventLog(controller.getLogMessages());
         tartanHome.setAuthenticated(String.valueOf(this.authenticated));

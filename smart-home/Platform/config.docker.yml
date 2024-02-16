@@ -21,6 +21,12 @@ houses:
     # and the super secret passcode to disable the alarm
     alarmPasscode: stop
 
+    # settings for start and end of "night time"
+    # stored in seconds
+    # default is start = 10pm, end = 8am
+    nightLockStart: 79200
+    nightLockEnd:   28800
+
     # Next house
   - name: cmu
     address: house-cmu

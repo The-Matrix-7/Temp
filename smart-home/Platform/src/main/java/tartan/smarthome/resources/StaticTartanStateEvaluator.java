@@ -2,6 +2,7 @@ package tartan.smarthome.resources;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         Integer tempReading = null; // the current temperature
         Integer targetTempSetting = null; // the user-desired temperature setting
         Integer humidityReading = null; // the current humidity
+        Integer nightLockStart = null; // the night lock start time
+        Integer nightLockEnd = null; // the night lock end time
         Boolean doorState = null; // the state of the door (true if open, false if closed)
         Boolean doorLocked = null; // state of door lock (true if locked, false if unlocked)
         Boolean lightState = null; // the state of the light (true if on, false if off)
@@ -48,6 +51,9 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         String alarmPassCode = null;
         String hvacSetting = null; // the HVAC mode setting, either Heater or Chiller
         String givenPassCode = "";
+        String lockPasscode = "";
+        String givenLockPasscode = "";
+
 
         System.out.println("Evaluating new state statically");
 
@@ -89,8 +95,16 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 doorLocked = (Boolean) inState.get(key);
             } else if (key.equals(IoTValues.INTRUDER_DETECTED)) {
                 intruderDetected = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.NIGHT_LOCK_START)) {
+                nightLockStart = Integer.valueOf(inState.get(key).toString());
+            } else if (key.equals(IoTValues.NIGHT_LOCK_END)) {
+                nightLockEnd = Integer.valueOf(inState.get(key).toString());
             } else if (key.equals(IoTValues.OWNERS_PHONE_NEARBY)) {
                 ownersPhoneNearby = (Boolean) inState.get(key);
+            } else if (key.equals(IoTValues.LOCKED_PASSCODE)) {
+                lockPasscode = (String) inState.get(key);
+            }else if (key.equals(IoTValues.GIVEN_LOCKED_PASSCODE)) {
+                givenLockPasscode = (String) inState.get(key);
             }
         }
 
@@ -109,7 +123,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         // The door is now open
         if (doorState) {
             if (!proximityState && alarmState) {
-
                 // door open and no one home and the alarm is set - sound alarm
                 log.append(formatLogEntry("Break in detected: Activating alarm"));
                 alarmActiveState = true;
@@ -119,7 +132,8 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 // close the door
                 doorState = false;
                 log.append(formatLogEntry("Closed door because house vacant"));
-            } else {
+            } 
+            else {
                 log.append(formatLogEntry("Door open"));
             }
 
@@ -143,6 +157,23 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
                 log.append(formatLogEntry("Closed door"));
             }
         }
+
+        if(!doorLocked) {
+            // get current time
+            LocalDateTime date = LocalDateTime.now();
+            int seconds = date.toLocalTime().toSecondOfDay();
+            if ((nightLockStart < nightLockEnd && (seconds > nightLockStart && seconds < nightLockEnd)) || 
+                (nightLockStart > nightLockEnd) && (seconds < nightLockEnd || seconds > nightLockStart)) {
+                // we need different conditions because the night lock should be ideally be able to be set
+                // to go through days. 
+                // first condition is if the end time is on the same day as the start time. if it is, check if current time is inbetween them.
+                // second condition is if the end time is on the next day. if it is, check if the current time is before the lock time would
+                // end, or if the current time is after it would be set.
+                doorLocked = true;
+                log.append(formatLogEntry("Closed door due to the Night Lock."));
+            }
+        }
+
 
         // Auto lock the house
         if (awayTimerState == true) {
@@ -218,9 +249,6 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             log.append(formatLogEntry("Warning: Not enough information to evaluate alarm"));
         }
 
-        // TODO: only allow passcode and keyless entry when it is all clear
-        // (intruderDetected == false)
-
         // Is the heater needed?
         if (tempReading < targetTempSetting) {
             log.append(formatLogEntry("Turning on heater, target temperature = " + targetTempSetting
@@ -281,11 +309,32 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             humidifierState = false;
         }
 
-        // Keyless Entry
-        if (ownersPhoneNearby) {
-            doorLocked = false;
-            log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
+        if (!intruderDetected) {
+            if (ownersPhoneNearby) {    // Keyless Entry
+                doorLocked = false;
+                log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
+            } else { if (doorLocked) {      // electronic operation
+                    // Check if a passcode is required for locking
+                    if (!lockPasscode.isEmpty()) {
+                        // A passcode is required for locking, check if the given passcode matches
+                        if (givenLockPasscode.compareTo(lockPasscode) != 0) {
+                            // Incorrect passcode, log and keep the door locked
+                            log.append(formatLogEntry("Incorrect passcode given for locking the door"));
+                            doorLocked = true;
+                        } else {
+                            // Correct passcode, unlock the door
+                            doorLocked = false;
+                            log.append(formatLogEntry("Door unlocked successfully with the correct passcode"));
+                        }
+                    } else {
+                        // No passcode required for locking, unlock the door
+                        doorLocked = false;
+                        log.append(formatLogEntry("Door unlocked successfully"));
+                    }
+                }
+             }
         }
+    
 
         Map<String, Object> newState = new Hashtable<>();
         newState.put(IoTValues.DOOR_STATE, doorState);

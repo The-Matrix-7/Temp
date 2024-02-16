@@ -48,7 +48,19 @@ public class TartanHomeSettings {
 
     @NotEmpty
     @JsonProperty
+    private String nightLockStart;
+
+    @NotEmpty
+    @JsonProperty
+    private String nightLockEnd;
+
+    @NotEmpty
+    @JsonProperty
     private String ownersPhoneNearby;
+
+    @NotEmpty
+    @JsonProperty
+    private String doorLockedPasscode;
 
     public String getTargetTemp() {
         return targetTemp;
@@ -114,11 +126,35 @@ public class TartanHomeSettings {
         this.alarmPasscode = alarmPasscode;
     }
 
+    public void setLockPasscode(String lockPasscode) {
+        this.doorLockedPasscode = lockPasscode;
+    }
+
+    public String getLockPasscode() {
+        return doorLockedPasscode;
+    }
+
     public String getDoorLocked() {
         return doorLocked;
     }
 
     public void setDoorLocked(String doorLocked) {
         this.doorLocked = doorLocked;
+    }
+
+    public String getNightLockStart() {
+        return nightLockStart;
+    }
+
+    public void setNightLockStart(String nightLockStart) {
+        this.nightLockStart = nightLockStart;
+    }
+
+    public String getNightLockEnd() {
+        return nightLockEnd;
+    }
+
+    public void setNightLockEnd(String nightLockEnd) {
+        this.nightLockEnd = nightLockEnd;
     }
 }
