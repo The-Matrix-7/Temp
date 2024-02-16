@@ -279,7 +279,11 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.DOOR_STATE, false); // door is closed
         initialState.put(IoTValues.LIGHT_STATE, false); // lights are off
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is locked
-        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no passcode
+        initialState.put(IoTValues.GIVEN_PASSCODE, ""); // give no alarm passcode
+        initialState.put(IoTValues.GIVEN_LOCKED_PASSCODE,""); // give no lock passcode
+        initialState.put(IoTValues.LOCKED_PASSCODE,"correct"); // passcode required to unlock door
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY,false); // registered phone not nearby
+
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
@@ -308,7 +312,6 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, true); // potential intruder
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // TODO: registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
@@ -349,7 +352,6 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.PROXIMITY_STATE, true); // someone detected on property
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // door is currently locked
         initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
-        // TODO: non-registered user
 
         newState = evaluator.evaluateState(initialState, log);
 
@@ -372,13 +374,17 @@ public class StaticTartanStateEvaluatorTest {
      * Tests the keyless entry functionality, ensuring that the door unlocks when
      * the owner's phone is nearby and remains unchanged otherwise.
      */
-    public void testKeylessEntry() {
+    public void keylessEntryTest() {
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
 
         // Test 1: Door locked, phone not nearby
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // Door initially locked
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
+        initialState.put(IoTValues.LOCKED_PASSCODE, "correct"); // Phone initially not nearby
+        initialState.put(IoTValues.GIVEN_LOCKED_PASSCODE, "incorrect"); // Phone initially not nearby
+        initialState.put(IoTValues.INTRUDER_DETECTED, false); // no intruder
+
 
         // Evaluate the state and assert that the door remains locked
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
@@ -404,6 +410,35 @@ public class StaticTartanStateEvaluatorTest {
         // Evaluate the state again and assert that the door remains unlocked
         newState = evaluator.evaluateState(initialState, log);
         assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
+    }
+
+    @Test
+    /**
+     *  ElectronicOperation: If a person requests a lock or unlock operation from an access panel, first check if that operation requires a passcode. 
+     * If it does, read and check the passcode. If the passcode is refused, send a message to the access panel. 
+     * Otherwise, perform the requested operation
+     */
+    public void electronicOperationTest(){
+        Map<String, Object> initialState = testState();
+        StringBuffer log = new StringBuffer();
+
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
+        initialState.put(IoTValues.DOOR_LOCK_STATE,true);  //door is locked
+        initialState.put(IoTValues.LOCKED_PASSCODE, "correct"); 
+        initialState.put(IoTValues.GIVEN_LOCKED_PASSCODE,"incorrect"); 
+        initialState.put(IoTValues.INTRUDER_DETECTED, false); // no intruder
+
+        
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        boolean newDoorLockState = (boolean) newState.get(IoTValues.DOOR_LOCK_STATE);
+        assertTrue(newDoorLockState, "Door should remain locked when incorrect passcode is given");
+
+        // now we enter a new password
+        initialState.put(IoTValues.GIVEN_LOCKED_PASSCODE,"correct");
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorLockState = (boolean) newState.get(IoTValues.DOOR_LOCK_STATE);
+        System.out.println(log);
+        assertFalse(newDoorLockState, "Door should be unlocked when correct passcode is given");
     }
 }
 

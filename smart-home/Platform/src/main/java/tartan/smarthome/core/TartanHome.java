@@ -1,6 +1,8 @@
 package tartan.smarthome.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -85,6 +87,9 @@ public class TartanHome {
 
     @JsonProperty
     private String alarmPasscode;
+
+    @JsonProperty
+    private String doorLockPasscode;
 
     /**
      * Empty constructor needed by Jackson deserialization
@@ -402,6 +407,18 @@ public class TartanHome {
      * @param alarmPasscode the new passcode
      */
     public void setAlarmPasscode(String alarmPasscode) { this.alarmPasscode = alarmPasscode; }
+
+    /**
+     * Get the door lock passcode
+     * @return the passcode
+     */
+    public String getDoorLockPasscode() { return doorLockPasscode; }
+
+    /**
+     * Set the alarm passcode
+     * @param lockPasscode the new passcode
+     */
+    public void setDoorLockPasscode(String doorLockPasscode) { this.doorLockPasscode = doorLockPasscode; }
 
     @Override
     public boolean equals(Object o) {
