@@ -31,9 +31,6 @@ public class TartanHomeData {
     @Column(name = "target_temp")
     private String targetTemp;
 
-    @Column(name = "ownersPhoneNearby")
-    private String ownersPhoneNearby;
-
     // the current temperature
     @Column(name = "temperature")
     private String temperature;
@@ -63,7 +60,7 @@ public class TartanHomeData {
     private String proximity;
     // the heater state (true if on, false if off)
     @Column(name = "hvac_mode")
-
+    
     private String hvacMode;
     // The state of the HVAC system
     @Column(name = "hvac_state")
@@ -83,7 +80,6 @@ public class TartanHomeData {
 
     /**
      * Create a mew data set from a TartanHome model
-     * 
      * @param h the home model
      */
     public TartanHomeData(TartanHome h) {
@@ -109,7 +105,6 @@ public class TartanHomeData {
 
     /**
      * Get the name
-     * 
      * @return the name
      */
     public String getHomeName() {
@@ -118,7 +113,6 @@ public class TartanHomeData {
 
     /**
      * Set the name
-     * 
      * @param homeName the new name
      */
     public void setHomeName(String homeName) {
@@ -127,7 +121,6 @@ public class TartanHomeData {
 
     /**
      * Get the address
-     * 
      * @return the address
      */
     public String getAddress() {
@@ -136,7 +129,6 @@ public class TartanHomeData {
 
     /**
      * Set the address
-     * 
      * @param address the new address
      */
     public void setAddress(String address) {
@@ -145,7 +137,6 @@ public class TartanHomeData {
 
     /**
      * Get the target temperature
-     * 
      * @return the target temperature
      */
     public String getTargetTemp() {
@@ -154,16 +145,12 @@ public class TartanHomeData {
 
     /**
      * Set the target temperature
-     * 
      * @param targetTemp the new target temperature
      */
-    public void setTargetTemp(String targetTemp) {
-        this.targetTemp = targetTemp;
-    }
+    public void setTargetTemp(String targetTemp) { this.targetTemp = targetTemp; }
 
     /**
      * Get the current temperature
-     * 
      * @return the temperature
      */
     public String getTemperature() {
@@ -172,7 +159,6 @@ public class TartanHomeData {
 
     /**
      * Set the temperature
-     * 
      * @param temperature the new temperature
      */
     public void setTemperature(String temperature) {
@@ -181,7 +167,6 @@ public class TartanHomeData {
 
     /**
      * Get the humidity
-     * 
      * @return Current humidity
      */
     public String getHumidity() {
@@ -190,7 +175,6 @@ public class TartanHomeData {
 
     /**
      * Set the humidity
-     * 
      * @param humidity the new humidity
      */
     public void setHumidity(String humidity) {
@@ -199,7 +183,6 @@ public class TartanHomeData {
 
     /**
      * Get the door state
-     * 
      * @return the door state
      */
     public String getDoor() {
@@ -208,7 +191,6 @@ public class TartanHomeData {
 
     /**
      * Set the door state
-     * 
      * @param door the new door state
      */
     public void setDoor(String door) {
@@ -217,16 +199,15 @@ public class TartanHomeData {
 
     /**
      * Get the door lock state
-     * 
      * @return the door lock state
      */
     public String getDoorLocked() {
         return doorLocked;
     }
+    
 
     /**
      * Set the door lock state
-     * 
      * @return the door lock state
      */
     public void setDoorLocked(String doorLocked) {
@@ -235,7 +216,6 @@ public class TartanHomeData {
 
     /**
      * Get the light state
-     * 
      * @return the light state
      */
     public String getLight() {
@@ -244,7 +224,6 @@ public class TartanHomeData {
 
     /**
      * Set the light state
-     * 
      * @param light the new light state
      */
     public void setLight(String light) {
@@ -253,7 +232,6 @@ public class TartanHomeData {
 
     /**
      * Get the dehumidifier state
-     * 
      * @return the dehumidifier state
      */
     public String getHumidifier() {
@@ -262,7 +240,6 @@ public class TartanHomeData {
 
     /**
      * Set the dehumidifier state
-     * 
      * @param humidifier the new state
      */
     public void setHumidifier(String humidifier) {
@@ -271,7 +248,6 @@ public class TartanHomeData {
 
     /**
      * Get the motion sensor state
-     * 
      * @return the motion sensor state
      */
     public String getProximity() {
@@ -280,7 +256,6 @@ public class TartanHomeData {
 
     /**
      * Set the motion sensor state
-     * 
      * @param proximity the new state
      */
     public void setProximity(String proximity) {
@@ -289,7 +264,6 @@ public class TartanHomeData {
 
     /**
      * Get the alarm armed state
-     * 
      * @return the status of the alarm
      */
     public String getAlarmArmed() {
@@ -298,7 +272,6 @@ public class TartanHomeData {
 
     /**
      * Arm/Disarm the alarm
-     * 
      * @param alarmArmed the new state
      */
     public void setAlarmArmed(String alarmArmed) {
@@ -307,7 +280,6 @@ public class TartanHomeData {
 
     /**
      * Get the HVAC mode
-     * 
      * @return the HVAC mode
      */
     public String getHvacMode() {
@@ -316,7 +288,6 @@ public class TartanHomeData {
 
     /**
      * Set the HVAC mode
-     * 
      * @param hvacMode the new mode
      */
     public void setHvacMode(String hvacMode) {
@@ -325,7 +296,6 @@ public class TartanHomeData {
 
     /**
      * Get the alarm active state
-     * 
      * @return the current state
      */
     public String getAlarmActive() {
@@ -334,7 +304,6 @@ public class TartanHomeData {
 
     /**
      * Set the alarm active state
-     * 
      * @param alarmActive the new state
      */
     public void setAlarmActive(String alarmActive) {
@@ -343,7 +312,6 @@ public class TartanHomeData {
 
     /**
      * Get the alarm delay
-     * 
      * @return the current delay
      */
     public String getAlarmDelay() {
@@ -352,7 +320,6 @@ public class TartanHomeData {
 
     /**
      * Set the alarm delay
-     * 
      * @param alarmDelay the new delay
      */
     public void setAlarmDelay(String alarmDelay) {
@@ -361,7 +328,6 @@ public class TartanHomeData {
 
     /**
      * Get the HVAC state
-     * 
      * @return the current state
      */
     public String getHvacState() {
@@ -370,16 +336,15 @@ public class TartanHomeData {
 
     /**
      * Set the HVAC state
-     * 
      * @param hvacState the new state
      */
     public void setHvacState(String hvacState) {
         this.hvacState = hvacState;
     }
 
+
     /**
      * Get the ID
-     * 
      * @return the ID
      */
     public long getId() {
@@ -388,7 +353,6 @@ public class TartanHomeData {
 
     /**
      * Set the ID
-     * 
      * @param id the new ID
      */
     public void setId(long id) {
@@ -397,21 +361,15 @@ public class TartanHomeData {
 
     /**
      * Get the creation time for this record
-     * 
      * @return the creation time
      */
-    public Date getCreateTimeStamp() {
-        return createTimeStamp;
-    }
+    public Date getCreateTimeStamp() { return createTimeStamp; }
 
     /**
      * Set the creation time
-     * 
      * @param createTimeStamp the new timestamp
      */
-    public void setCreateTimeStamp(Date createTimeStamp) {
-        this.createTimeStamp = createTimeStamp;
-    }
+    public void setCreateTimeStamp(Date createTimeStamp) { this.createTimeStamp = createTimeStamp; }
 
     @Override
     public int hashCode() {
