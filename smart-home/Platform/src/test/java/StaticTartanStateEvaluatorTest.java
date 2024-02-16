@@ -341,14 +341,16 @@ public class StaticTartanStateEvaluatorTest {
      * Tests the keyless entry functionality, ensuring that the door unlocks when
      * the owner's phone is nearby and remains unchanged otherwise.
      */
-    public void testKeylessEntry() {
+    public void keylessEntryTest() {
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
 
         // Test 1: Door locked, phone not nearby
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // Door initially locked
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
-
+        initialState.put(IoTValues.LOCKED_PASSCODE, "correct"); // Phone initially not nearby
+        initialState.put(IoTValues.GIVEN_LOCKED_PASSCODE, "incorrect"); // Phone initially not nearby
+        initialState.put(IoTValues.INTRUDER_DETECTED, false); // no intruder
 
 
         // Evaluate the state and assert that the door remains locked
@@ -383,7 +385,7 @@ public class StaticTartanStateEvaluatorTest {
      * If it does, read and check the passcode. If the passcode is refused, send a message to the access panel. 
      * Otherwise, perform the requested operation
      */
-    public void ElectronicOperationTest(){
+    public void electronicOperationTest(){
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
 
