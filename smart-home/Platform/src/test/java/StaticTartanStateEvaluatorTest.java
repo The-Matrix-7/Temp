@@ -101,13 +101,81 @@ public class StaticTartanStateEvaluatorTest {
     public void r3Test() {
         StringBuffer log = new StringBuffer();
         Map<String, Object> initialState = testState();
+
+        // initial conditions
         initialState.put(IoTValues.DOOR_STATE, true); // door is open
-        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
 
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertTrue(newDoorState, "Door is open if no break in is detected and resident is in their house");
+
+
+        // resident leaves property
+        initialState.put(IoTValues.DOOR_STATE, true); // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
+
+
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
         assertFalse(newDoorState, "Door should not be open while the house is vacant");
+
     }
+
+    @Test
+    /**
+     * Checks if door remains closed regardless of if the alarm is armed or the proximity sensor detects anything 
+     */
+    public void doorRemainsClosed() {
+        StringBuffer log = new StringBuffer();
+        Map<String, Object> initialState = testState();
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, false); // alarm is not armed
+
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+    }
+
+
+    @Test
+    /**
+     * Checks if the system does not change the state of the door when a possible break in is detected
+     */
+    public void doorStateBreakInDetected() {
+        StringBuffer log = new StringBuffer();
+        Map<String, Object> initialState = testState();
+
+        initialState.put(IoTValues.DOOR_STATE, false); // door is closed
+        initialState.put(IoTValues.PROXIMITY_STATE, true); // house is occupied
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        Map<String, Object>newState = evaluator.evaluateState(initialState, log);
+        Boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertFalse(newDoorState, "Door should remain closed");
+
+        initialState.put(IoTValues.DOOR_STATE, true); // door is open
+        initialState.put(IoTValues.PROXIMITY_STATE, false); // house is vacant
+        initialState.put(IoTValues.ALARM_STATE, true); // alarm is armed
+        
+        newState = evaluator.evaluateState(initialState, log);
+        newDoorState = (boolean) newState.get(IoTValues.DOOR_STATE);
+        assertTrue(newDoorState, "Door should remain open");
+
+    }
+
 
     @Test
     /**
