@@ -3,6 +3,7 @@
 */
 plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'jacoco'
     id 'info.solidsoft.pitest' version '1.7.4'
 }
 
@@ -23,6 +24,19 @@ pitest {
  outputFormats = ['HTML']
  timestampedReports = false
  junit5PluginVersion = '0.15'
+}
+
+jacoco {
+    toolVersion = "0.8.9"
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = true
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        html.required = true
+    }
 }
 
 repositories {
