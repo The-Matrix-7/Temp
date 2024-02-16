@@ -326,33 +326,41 @@ public class StaticTartanStateEvaluatorTest {
         System.out.println(log);
     }
 
-        @Test
+    @Test
+    /**
+     * Tests the keyless entry functionality, ensuring that the door unlocks when
+     * the owner's phone is nearby and remains unchanged otherwise.
+     */
     public void testKeylessEntry() {
         Map<String, Object> initialState = testState();
         StringBuffer log = new StringBuffer();
 
-        // test 1
+        // Test 1: Door locked, phone not nearby
         initialState.put(IoTValues.DOOR_LOCK_STATE, true); // Door initially locked
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
 
+        // Evaluate the state and assert that the door remains locked
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
         assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain locked");
 
         // Change the owner's phone state to nearby
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true);
 
+        // Evaluate the state again and assert that the door is unlocked
         newState = evaluator.evaluateState(initialState, log);
         assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be unlocked");
 
-        // test 2
+        // Test 2: Door unlocked, phone nearby
         initialState.put(IoTValues.DOOR_LOCK_STATE, false); // Door initially unlocked
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true); // Phone nearby
 
+        // Assert that the door remains unlocked
         assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
 
         // Change the door state to locked
         initialState.put(IoTValues.DOOR_LOCK_STATE, true);
 
+        // Evaluate the state again and assert that the door remains unlocked
         newState = evaluator.evaluateState(initialState, log);
         assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
     }

@@ -282,7 +282,7 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
         }
 
         // Keyless Entry
-        if (ownersPhoneNearby == true) {
+        if (ownersPhoneNearby) {
             doorLocked = false;
             log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
         }
