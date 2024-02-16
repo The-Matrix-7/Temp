@@ -288,25 +288,25 @@ public class StaticTartanStateEvaluator implements TartanStateEvaluator {
             if (ownersPhoneNearby) {    // Keyless Entry
                 doorLocked = false;
                 log.append(formatLogEntry("Door automatically unlocked for owner's arrival"));
-            // } else { if (doorLocked) {      // electronic operation
-            //         // Check if a passcode is required for locking
-            //         if (!lockPasscode.isEmpty()) {
-            //             // A passcode is required for locking, check if the given passcode matches
-            //             if (givenLockPasscode.compareTo(lockPasscode) != 0) {
-            //                 // Incorrect passcode, log and keep the door locked
-            //                 log.append(formatLogEntry("Incorrect passcode given for locking the door"));
-            //                 doorLocked = true;
-            //             } else {
-            //                 // Correct passcode, unlock the door
-            //                 doorLocked = false;
-            //                 log.append(formatLogEntry("Door unlocked successfully with the correct passcode"));
-            //             }
-            //         } else {
-            //             // No passcode required for locking, unlock the door
-            //             doorLocked = false;
-            //             log.append(formatLogEntry("Door unlocked successfully"));
-            //         }
-            //     }
+            } else { if (doorLocked) {      // electronic operation
+                    // Check if a passcode is required for locking
+                    if (!lockPasscode.isEmpty()) {
+                        // A passcode is required for locking, check if the given passcode matches
+                        if (givenLockPasscode.compareTo(lockPasscode) != 0) {
+                            // Incorrect passcode, log and keep the door locked
+                            log.append(formatLogEntry("Incorrect passcode given for locking the door"));
+                            doorLocked = true;
+                        } else {
+                            // Correct passcode, unlock the door
+                            doorLocked = false;
+                            log.append(formatLogEntry("Door unlocked successfully with the correct passcode"));
+                        }
+                    } else {
+                        // No passcode required for locking, unlock the door
+                        doorLocked = false;
+                        log.append(formatLogEntry("Door unlocked successfully"));
+                    }
+                }
              }
         }
     
