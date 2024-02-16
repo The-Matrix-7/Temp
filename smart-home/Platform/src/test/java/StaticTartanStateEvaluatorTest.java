@@ -44,6 +44,7 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.AWAY_TIMER, false);
         initialState.put(IoTValues.ALARM_ACTIVE, false);
         initialState.put(IoTValues.DOOR_LOCK_STATE, false);
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false);
         return initialState;
     }
 
@@ -323,6 +324,37 @@ public class StaticTartanStateEvaluatorTest {
         assertNotEquals(-1, log.lastIndexOf("All Clear - intruder no longer detected"), "Access panel should display all clear message");
 
         System.out.println(log);
+    }
+
+        @Test
+    public void testKeylessEntry() {
+        Map<String, Object> initialState = testState();
+        StringBuffer log = new StringBuffer();
+
+        // test 1
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true); // Door initially locked
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false); // Phone initially not nearby
+
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        assertTrue((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain locked");
+
+        // Change the owner's phone state to nearby
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true);
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should be unlocked");
+
+        // test 2
+        initialState.put(IoTValues.DOOR_LOCK_STATE, false); // Door initially unlocked
+        initialState.put(IoTValues.OWNERS_PHONE_NEARBY, true); // Phone nearby
+
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
+
+        // Change the door state to locked
+        initialState.put(IoTValues.DOOR_LOCK_STATE, true);
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((boolean) newState.get(IoTValues.DOOR_LOCK_STATE), "Door should remain unlocked");
     }
 }
 
