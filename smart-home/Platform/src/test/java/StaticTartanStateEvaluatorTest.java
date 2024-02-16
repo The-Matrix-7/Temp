@@ -77,25 +77,44 @@ public class StaticTartanStateEvaluatorTest {
     }
 
     
-
     @Test
     /**
      * Test that the alarm is sounded when it's enabled and the house gets suddenly
      * occupied.
      */
     public void r4Test() {
+        StringBuffer log = new StringBuffer();
         Map<String, Object> initialState = testState();
-        initialState.put(IoTValues.ALARM_STATE, true);
-
-        initialState.put(IoTValues.PROXIMITY_STATE, true);
-        initialState.put(IoTValues.DOOR_STATE, false);
         initialState.put(IoTValues.GIVEN_PASSCODE, "incorrect");
 
-        StringBuffer log = new StringBuffer();
+        // Test case 1: ALARM_STATE = true, PROXIMITY_STATE = true
+        initialState.put(IoTValues.ALARM_STATE, true);
+        initialState.put(IoTValues.PROXIMITY_STATE, true);
         Map<String, Object> newState = evaluator.evaluateState(initialState, log);
 
         assertTrue((Boolean) newState.get(IoTValues.ALARM_ACTIVE));
         assertTrue(log.toString().contains("Activating alarm"));
+
+        // Test case 2: ALARM_STATE = true, PROXIMITY_STATE = false
+        initialState.put(IoTValues.ALARM_STATE, true);
+        initialState.put(IoTValues.PROXIMITY_STATE, false);
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((Boolean) newState.get(IoTValues.ALARM_ACTIVE));
+
+        // Test case 3: ALARM_STATE = false, PROXIMITY_STATE = true
+        initialState.put(IoTValues.ALARM_STATE, false);
+        initialState.put(IoTValues.PROXIMITY_STATE, true);
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((Boolean) newState.get(IoTValues.ALARM_ACTIVE));
+
+        // Test case 4: ALARM_STATE = false, PROXIMITY_STATE = false
+        initialState.put(IoTValues.ALARM_STATE, false);
+        initialState.put(IoTValues.PROXIMITY_STATE, false);
+
+        newState = evaluator.evaluateState(initialState, log);
+        assertFalse((Boolean) newState.get(IoTValues.ALARM_ACTIVE));
     }
 
     @Test
