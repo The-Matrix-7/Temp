@@ -48,6 +48,14 @@ public class TartanHomeSettings {
 
     @NotEmpty
     @JsonProperty
+    private String nightLockStart;
+
+    @NotEmpty
+    @JsonProperty
+    private String nightLockEnd;
+
+    @NotEmpty
+    @JsonProperty
     private String ownersPhoneNearby;
 
     @NotEmpty
@@ -132,5 +140,21 @@ public class TartanHomeSettings {
 
     public void setDoorLocked(String doorLocked) {
         this.doorLocked = doorLocked;
+    }
+
+    public String getNightLockStart() {
+        return nightLockStart;
+    }
+
+    public void setNightLockStart(String nightLockStart) {
+        this.nightLockStart = nightLockStart;
+    }
+
+    public String getNightLockEnd() {
+        return nightLockEnd;
+    }
+
+    public void setNightLockEnd(String nightLockEnd) {
+        this.nightLockEnd = nightLockEnd;
     }
 }

@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import tartan.smarthome.resources.StaticTartanStateEvaluator;
 import tartan.smarthome.resources.iotcontroller.IoTValues;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +46,8 @@ public class StaticTartanStateEvaluatorTest {
         initialState.put(IoTValues.ALARM_ACTIVE, false);
         initialState.put(IoTValues.DOOR_LOCK_STATE, false);
         initialState.put(IoTValues.OWNERS_PHONE_NEARBY, false);
+        initialState.put(IoTValues.NIGHT_LOCK_START, "0");
+        initialState.put(IoTValues.NIGHT_LOCK_END, "0");
         return initialState;
     }
 
@@ -227,6 +230,36 @@ public class StaticTartanStateEvaluatorTest {
         assertEquals(true, newState.get(IoTValues.ALARM_STATE), "Alarm should not be armed with no passcode"); // try correct code
 
 
+    }
+
+    @Test
+    /**
+     * Testing Night Locks relocking functionality.
+     * If a door is unlocked while it is considered to be night time, the door should be relocked.
+     */
+    public void NightLockRelockTest() {
+        // set current time of day to be 1 second after nightLockStart
+        LocalDateTime date = LocalDateTime.now();
+        int seconds = date.toLocalTime().toSecondOfDay();
+
+        // set mock state
+        Map<String, Object> initialState = testState();
+        initialState.put(IoTValues.DOOR_LOCK_STATE, false); // door is opened
+
+        // set night lock times 
+        initialState.put(IoTValues.NIGHT_LOCK_START, String.valueOf(seconds-2));
+        initialState.put(IoTValues.NIGHT_LOCK_END, String.valueOf(seconds+2));
+
+        // set proximity state to be occupied so that door doesnt auto close due to being vacant
+        initialState.put(IoTValues.PROXIMITY_STATE, true); 
+
+        // evaluate
+        StringBuffer log = new StringBuffer();
+        Map<String, Object> newState = evaluator.evaluateState(initialState, log);
+        System.out.println(newState);
+        boolean newDoorState = (boolean) newState.get(IoTValues.DOOR_LOCK_STATE);
+        assertTrue(newDoorState, "Door should not be open while it is in between the start and end times of the night lock.");
+        
     }
 
 

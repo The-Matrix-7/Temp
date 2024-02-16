@@ -33,6 +33,8 @@ public class TartanHomeService {
     private Integer port;
     private String alarmDelay;
     private String alarmPasscode;
+    private String nightLockStart;
+    private String nightLockEnd;
     private String lockedPasscode;
     private String targetTemp;
     private String user;
@@ -75,6 +77,8 @@ public class TartanHomeService {
         this.alarmDelay = settings.getAlarmDelay();
         this.alarmPasscode = settings.getAlarmPasscode();
         this.lockedPasscode = settings.getAlarmPasscode();
+        this.nightLockStart = settings.getNightLockStart();
+        this.nightLockEnd = settings.getNightLockEnd();
 
         this.historyTimer = historyTimer*1000;
         this.logHistory = true;
@@ -361,6 +365,8 @@ public class TartanHomeService {
 
         tartanHome.setTargetTemp(this.targetTemp);
         tartanHome.setAlarmDelay(this.alarmDelay);
+        tartanHome.setNightLockStart(this.nightLockStart);
+        tartanHome.setNightLockEnd(this.nightLockEnd);
 
         tartanHome.setEventLog(controller.getLogMessages());
         tartanHome.setAuthenticated(String.valueOf(this.authenticated));
